@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
-import { Login } from '../pages/Login';
-import { Meals } from '../pages/Meals';
+import Login from '../pages/Login';
+import Meals from '../pages/Meals';
 
 function Router() {
   return (
