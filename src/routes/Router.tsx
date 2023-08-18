@@ -6,7 +6,7 @@ function Router() {
   return (
     <Routes>
       <Route path="/" element={ <Login /> } />
-      <Route path="/" element={ <Meals /> } />
+      <Route path="/meals" element={ <Meals /> } />
     </Routes>
   );
 }
