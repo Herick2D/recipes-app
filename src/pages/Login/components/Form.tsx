@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Button, Stack, TextField } from '@mui/material';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import { LoginFormType } from '../../../types';
 
@@ -39,31 +40,37 @@ function Form() {
   };
 
   return (
-    <form onSubmit={ handleSubmit }>
-      <input
+    <Stack component="form" spacing={ 1 } onSubmit={ handleSubmit }>
+      <TextField
         name="email"
+        variant="outlined"
         value={ login.email }
         data-testid="email-input"
         type="email"
-        placeholder="Username"
+        label="Email"
         onChange={ handleChange }
+        size="small"
       />
-      <input
+      <TextField
         name="password"
+        variant="outlined"
         value={ login.password }
         data-testid="password-input"
         type="password"
-        placeholder="Password"
+        label="Senha"
         onChange={ handleChange }
+        size="small"
       />
-      <button
+      <Button
         data-testid="login-submit-btn"
         type="submit"
+        color="primary"
+        variant="contained"
         disabled={ isDisabled() }
       >
         Enter
-      </button>
-    </form>
+      </Button>
+    </Stack>
   );
 }
 
