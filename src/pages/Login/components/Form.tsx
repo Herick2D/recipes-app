@@ -40,26 +40,27 @@ function Form() {
   };
 
   return (
-    <Stack component="form" spacing={ 1 } onSubmit={ handleSubmit }>
+    <Stack component="form" spacing={ 2 } onSubmit={ handleSubmit }>
       <TextField
         name="email"
         variant="outlined"
         value={ login.email }
-        data-testid="email-input"
         type="email"
         label="Email"
         onChange={ handleChange }
         size="small"
+        autoComplete="off"
+        inputProps={ { 'data-testid': 'email-input' } }
       />
       <TextField
         name="password"
         variant="outlined"
         value={ login.password }
-        data-testid="password-input"
         type="password"
         label="Senha"
         onChange={ handleChange }
         size="small"
+        inputProps={ { 'data-testid': 'password-input' } }
       />
       <Button
         data-testid="login-submit-btn"
