@@ -1,5 +1,6 @@
-import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import SearchBar from './SearchBar';
 import profileIcon from '../../../images/profileIcon.svg';
 import searchIcon from '../../../images/searchIcon.svg';
 
@@ -7,6 +8,7 @@ function Header() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [searchInput, setSearchInput] = useState(false);
+
   return (
     <header>
       {pathname === '/meals' && (
@@ -18,7 +20,9 @@ function Header() {
           <button onClick={ () => setSearchInput(!searchInput) }>
             <img src={ searchIcon } alt="search icon" data-testid="search-top-btn" />
           </button>
-          {searchInput && <input type="text" data-testid="search-input" />}
+          {searchInput && (
+            <SearchBar pathname={ pathname } />
+          )}
         </>
       )}
       {pathname === '/drinks' && (
@@ -30,7 +34,11 @@ function Header() {
           <button onClick={ () => setSearchInput(!searchInput) }>
             <img src={ searchIcon } alt="search icon" data-testid="search-top-btn" />
           </button>
-          {searchInput && <input type="text" data-testid="search-input" />}
+          {searchInput && (
+            <SearchBar
+              pathname={ pathname }
+            />
+          )}
         </>
       )}
       {pathname === '/profile' && (

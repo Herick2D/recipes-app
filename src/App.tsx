@@ -1,10 +1,14 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Router } from './routes';
+import { RecipiesProvider } from './contexts/recipiesContexts';
 
 function App() {
   return (
-    <Router />
+    <RecipiesProvider>
+      <Router />
+    </RecipiesProvider>
+
   );
 }
 
