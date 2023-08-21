@@ -1,7 +1,12 @@
 function Footer() {
   return (
     <footer data-testid="footer" id="footer">
-      <h1>Footer</h1>
+      <button data-testid="drinks-bottom-btn">
+        <img src="src/images/drinkIcon.svg" alt="drink-button" />
+      </button>
+      <button data-testid="meals-bottom-btn">
+        <img src="src/images/mealIcon.svg" alt="food-button" />
+      </button>
     </footer>
   );
 }
