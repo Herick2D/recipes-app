@@ -1,11 +1,11 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithRouter } from './helpers/RenderWithRouter';
-import Login from '../pages/Login';
+import App from '../App';
 
 describe(('Testando a página de Login'), () => {
   test('Testando o formulário da página de Login', async () => {
-    renderWithRouter(<Login />);
+    renderWithRouter(<App />);
 
     const emailInput = screen.getByTestId('email-input');
     const passwordInput = screen.getByTestId('password-input');
@@ -16,11 +16,13 @@ describe(('Testando a página de Login'), () => {
     expect(submitButton).toBeInTheDocument();
     expect(submitButton).toBeDisabled();
 
-    await userEvent.type(emailInput, 'teste@gmail.com');
-    await userEvent.type(passwordInput, 'teste12345');
+    await userEvent.type(emailInput, 'email@mail.com');
+    await userEvent.type(passwordInput, '1234567');
 
     expect(submitButton).toBeEnabled();
 
     await userEvent.click(submitButton);
+
+    expect(screen.getByText('Meals')).toBeInTheDocument();
   });
 });
