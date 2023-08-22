@@ -1,7 +1,7 @@
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../App';
-import { renderWithRouter } from './helpers/RenderWithRouter';
+import { renderWithRouter } from './helpers/renderWithRouter';
 
 describe('Testando componente Header', () => {
   const TITLE_TEST_ID = 'page-title';
