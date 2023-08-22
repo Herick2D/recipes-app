@@ -12,7 +12,7 @@ function Drinks() {
 
   return (
     <ul>
-      {drinksArray.map((drink, index) => (
+      {drinksArray.length > 1 ? drinksArray.map((drink, index) => (
         <li key={ drink.idDrink } data-testid={ `${index}-recipe-card` }>
           <img
             src={ drink.strDrinkThumb }
@@ -21,7 +21,7 @@ function Drinks() {
           />
           <p data-testid={ `${index}-card-name` }>{drink.strDrink}</p>
         </li>
-      ))}
+      )) : null}
     </ul>
   );
 }

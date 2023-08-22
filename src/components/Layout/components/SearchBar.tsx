@@ -32,7 +32,8 @@ function SearchBar({ pathname }: SearchBarProps) {
     event.preventDefault();
     setIsLoading(true);
 
-    const endpoint = helperEndpoint(pathname, searchType, searchQuery) || '';
+    const endpoint = helperEndpoint(pathname, searchType, searchQuery, setIsLoading)
+    || '';
 
     const data = await handleFetch(endpoint);
     const finalData = data.drinks || data.meals;
@@ -43,19 +44,17 @@ function SearchBar({ pathname }: SearchBarProps) {
       return;
     }
 
+    setIsLoading(false);
+    setRecipies(finalData);
+
     if (finalData.length === 1) {
       const { idDrink, idMeal } = finalData[0];
-      setIsLoading(true);
       if (pathname === '/drinks') {
         navigate(`/drinks/${idDrink}`);
       } else if (pathname === '/meals') {
         navigate(`/meals/${idMeal}`);
       }
-      return;
     }
-
-    setIsLoading(false);
-    setRecipies(finalData);
   };
 
   return (
@@ -98,7 +97,7 @@ function SearchBar({ pathname }: SearchBarProps) {
       <input
         type="text"
         value={ searchQuery }
-        onChange={ handleSearchQueryChange }
+        onChange={ (handleSearchQueryChange) }
         placeholder="Enter search query"
         data-testid="search-input"
       />

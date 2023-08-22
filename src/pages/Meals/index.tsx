@@ -12,7 +12,7 @@ function Meals() {
 
   return (
     <ul>
-      {mealsArray.map((meal, index) => (
+      {mealsArray.length > 1 ? mealsArray.map((meal, index) => (
         <li key={ meal.idMeal } data-testid={ `${index}-recipe-card` }>
           <img
             src={ meal.strMealThumb }
@@ -21,7 +21,7 @@ function Meals() {
           />
           <p data-testid={ `${index}-card-name` }>{meal.strMeal}</p>
         </li>
-      ))}
+      )) : null}
     </ul>
   );
 }

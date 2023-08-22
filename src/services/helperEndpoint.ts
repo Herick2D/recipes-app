@@ -2,6 +2,7 @@ const helperEndpoint = (
   pathname: string,
   searchType: string,
   searchQuery: string,
+  setIsloading: React.Dispatch<React.SetStateAction<boolean>>,
 ) => {
   let endpoint = '';
 
@@ -14,6 +15,7 @@ const helperEndpoint = (
       } else if (searchType === 'firstLetter') {
         if (searchQuery.length !== 1) {
           window.alert('Your search must have only 1 (one) character');
+          setIsloading(false);
           return;
         }
         endpoint = `https://www.thecocktaildb.com/api/json/v1/1/search.php?f=${searchQuery}`;
@@ -27,6 +29,7 @@ const helperEndpoint = (
       } else if (searchType === 'firstLetter') {
         if (searchQuery.length !== 1) {
           window.alert('Your search must have only 1 (one) character');
+          setIsloading(false);
           return;
         }
         endpoint = `https://www.themealdb.com/api/json/v1/1/search.php?f=${searchQuery}`;
