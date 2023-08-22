@@ -3,7 +3,7 @@ export type LoginFormType = {
   password: string;
 };
 
-export type Meals = {
+export type Meal = {
   idMeal: string;
   strMeal: string;
   strMealThumb: string;
@@ -13,7 +13,7 @@ export type Meals = {
   strInstructions: string;
 };
 
-export type Drinks = {
+export type Drink = {
   idDrink: string;
   strDrink: string;
   strDrinkThumb: string;
@@ -22,3 +22,5 @@ export type Drinks = {
   strAlcoholic: string;
   strInstructions: string;
 };
+
+export type RadioType = 'ingredient' | 'name' | 'firstLetter';

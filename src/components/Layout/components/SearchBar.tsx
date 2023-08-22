@@ -1,70 +1,61 @@
-import { useContext, useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { RecipiesContexts } from '../../../contexts/recipiesContexts';
+import helperEndpoint from '../../../services/helperEndpoint';
+import { RadioType } from '../../../types';
 
 type SearchBarProps = {
   pathname: string;
 };
 
 function SearchBar({ pathname }: SearchBarProps) {
-  const [searchType, setSearchType] = useState('ingredient');
+  const [searchType, setSearchType] = useState<RadioType>('ingredient');
   const [searchQuery, setSearchQuery] = useState('');
-  const { setRecipies } = useContext(RecipiesContexts);
+  const { setRecipies, setIsLoading } = useContext(RecipiesContexts);
+  const navigate = useNavigate();
 
-  const handleSearchTypeChange = (event: any) => {
-    setSearchType(event.target.value);
+  const handleSearchTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchType(event.target.value as RadioType);
   };
 
-  const handleSearchQueryChange = (event: any) => {
+  const handleSearchQueryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
 
   const handleFetch = async (url: string) => {
     const response = await fetch(url);
     const data = await response.json();
-    if (pathname === 'meals') {
-      setRecipies(data.meals);
-    } else if (pathname === 'drinks') {
-      setRecipies(data.drinks);
-    }
+    return data;
   };
 
-  const handleSearchSubmit = (event: any) => {
+  const handleSearchSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsLoading(true);
 
-    let endpoint = '';
+    const endpoint = helperEndpoint(pathname, searchType, searchQuery) || '';
 
-    switch (pathname) {
-      case '/drinks':
-        if (searchType === 'ingredient') {
-          endpoint = `https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${searchQuery}`;
-        } else if (searchType === 'name') {
-          endpoint = `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${searchQuery}`;
-        } else if (searchType === 'firstLetter') {
-          if (searchQuery.length !== 1) {
-            window.alert('Your search must have only 1 (one) character');
-            return;
-          }
-          endpoint = `https://www.thecocktaildb.com/api/json/v1/1/search.php?f=${searchQuery}`;
-        }
-        break;
-      case '/meals':
-        if (searchType === 'ingredient') {
-          endpoint = `https://www.themealdb.com/api/json/v1/1/filter.php?i=${searchQuery}`;
-        } else if (searchType === 'name') {
-          endpoint = `https://www.themealdb.com/api/json/v1/1/search.php?s=${searchQuery}`;
-        } else if (searchType === 'firstLetter') {
-          if (searchQuery.length !== 1) {
-            window.alert('Your search must have only 1 (one) character');
-            return;
-          }
-          endpoint = `https://www.themealdb.com/api/json/v1/1/search.php?f=${searchQuery}`;
-        }
-        break;
-      default:
-        break;
+    const data = await handleFetch(endpoint);
+    const finalData = data.drinks || data.meals;
+
+    if (finalData === null || finalData === undefined) {
+      window.alert("Sorry, we haven't found any recipes for these filters.");
+      setIsLoading(false);
+      return;
     }
 
-    handleFetch(endpoint);
+    if (finalData.length === 1) {
+      const { idDrink, idMeal } = finalData[0];
+      setIsLoading(true);
+      if (pathname === '/drinks') {
+        navigate(`/drinks/${idDrink}`);
+      } else if (pathname === '/meals') {
+        navigate(`/meals/${idMeal}`);
+      }
+      return;
+    }
+
+    setIsLoading(false);
+    setRecipies(finalData);
   };
 
   return (
@@ -77,6 +68,7 @@ function SearchBar({ pathname }: SearchBarProps) {
             value="ingredient"
             checked={ searchType === 'ingredient' }
             onChange={ handleSearchTypeChange }
+            data-testid="ingredient-search-radio"
           />
           Ingredient
         </label>
@@ -87,6 +79,7 @@ function SearchBar({ pathname }: SearchBarProps) {
             value="name"
             checked={ searchType === 'name' }
             onChange={ handleSearchTypeChange }
+            data-testid="name-search-radio"
           />
           Name
         </label>
@@ -97,19 +90,25 @@ function SearchBar({ pathname }: SearchBarProps) {
             value="firstLetter"
             checked={ searchType === 'firstLetter' }
             onChange={ handleSearchTypeChange }
+            data-testid="first-letter-search-radio"
           />
           First Letter
         </label>
       </div>
-      <div>
-        <input
-          type="text"
-          value={ searchQuery }
-          onChange={ handleSearchQueryChange }
-          placeholder="Enter search query"
-        />
-        <button type="submit">Search</button>
-      </div>
+      <input
+        type="text"
+        value={ searchQuery }
+        onChange={ handleSearchQueryChange }
+        placeholder="Enter search query"
+        data-testid="search-input"
+      />
+      <button
+        type="submit"
+        data-testid="exec-search-btn"
+      >
+        Search
+
+      </button>
     </form>
   );
 }
