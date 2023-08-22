@@ -1,15 +1,29 @@
+import { Link } from 'react-router-dom';
+import { Drink, Meal } from '../../../types';
+
 type CardProps = {
+  location: string;
+  recipe: Meal & Drink;
   index: number;
-  name: string;
-  thumbnail: string;
 };
 
-function Card({ index, name, thumbnail }: CardProps) {
+function Card({ location, recipe, index }: CardProps) {
+  const { idMeal, idDrink } = recipe;
   return (
-    <div data-testid={ `${index}-recipe-card` }>
-      <img data-testid={ `${index}-card-img` } src={ thumbnail } alt={ name } />
-      <h3 data-testid={ `${index}-card-name` }>{ name }</h3>
-    </div>
+    <Link
+      to={ `${location}/${location === '/meals' ? idMeal : idDrink}` }
+    >
+      <div data-testid={ `${index}-recipe-card` }>
+        <img
+          data-testid={ `${index}-card-img` }
+          src={ location === '/meals' ? recipe.strMealThumb : recipe.strDrinkThumb }
+          alt={ location === '/meals' ? recipe.strMeal : recipe.strDrink }
+        />
+        <h3 data-testid={ `${index}-card-name` }>
+          {location === '/meals' ? recipe.strMeal : recipe.strDrink}
+        </h3>
+      </div>
+    </Link>
   );
 }
 

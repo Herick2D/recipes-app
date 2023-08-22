@@ -1,28 +1,38 @@
-import { useContext } from 'react';
-import { RecipiesContexts } from '../../contexts/recipiesContexts';
+import { useContext, useEffect, useState } from 'react';
+import { RecipesContexts } from '../../contexts/recipesContexts';
 import { Drink } from '../../types';
+import Recipes from '../../components/Recipes';
+import { fetchGeneric } from '../../services/fetchGeneric';
 
 function Drinks() {
-  const { recipies, isLoading } = useContext(RecipiesContexts);
-  const drinksArray = recipies.splice(0, 12) as Drink[];
+  const { recipes, isLoading, setIsLoading, setRecipes } = useContext(RecipesContexts);
+  const [drinksArray, setDrinksArray] = useState<Drink[]>([]);
+
+  useEffect(() => {
+    const fetchMeals = async () => {
+      setIsLoading(true);
+      const data = await fetchGeneric('/drinks');
+      setIsLoading(false);
+      setRecipes(data.drinks);
+    };
+
+    fetchMeals();
+  }, [setRecipes]);
+
+  useEffect(() => {
+    const MAX_RECIPES = 12;
+    const drinksSliced = recipes.slice(0, MAX_RECIPES);
+    setDrinksArray(drinksSliced as Drink[]);
+  }, [recipes]);
 
   if (isLoading) {
     return <h1>Carregando...</h1>;
   }
 
   return (
-    <ul>
-      {drinksArray.length > 1 ? drinksArray.map((drink, index) => (
-        <li key={ drink.idDrink } data-testid={ `${index}-recipe-card` }>
-          <img
-            src={ drink.strDrinkThumb }
-            alt={ drink.strDrink }
-            data-testid={ `${index}-card-img` }
-          />
-          <p data-testid={ `${index}-card-name` }>{drink.strDrink}</p>
-        </li>
-      )) : null}
-    </ul>
+    <main>
+      <Recipes recipes={ drinksArray } pathname="/drinks" />
+    </main>
   );
 }
 
