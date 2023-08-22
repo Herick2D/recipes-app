@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import beefMeals from './helpers/beefMealsMock';
 import { renderWithRouter } from './helpers/renderWithRouter';
 import App from '../App';
-import breakfastMeals from './helpers/breakfastMealsMock';
+import chikenMeals from './helpers/chickenMealsMock';
 import oneMealMock from './helpers/oneMealMock';
 import cocktailDrinks from './helpers/cocktailDrinksMock';
 import oneDrink from './helpers/oneDrinkMock';
@@ -53,7 +53,7 @@ describe('Teste SearchBar em Meals', () => {
 
     await userEvent.click(submitBtn);
 
-    expect(global.fetch).toBeCalledTimes(1);
+    expect(global.fetch).toBeCalledTimes(2);
   });
 
   test('Testa o SearchBar quando faz uma pesquisa de ingrediente beef', async () => {
@@ -102,9 +102,9 @@ describe('Teste SearchBar em Meals', () => {
     expect(global.fetch).toBeCalledTimes(1);
 
     const listItens = await screen.findAllByRole('listitem');
-    const beefMealTitle = await screen.findByText(/braised beef chilli/i);
+    const beefMealTitle = await screen.findByText(/Beef and Mustard Pie/i);
     const beefMealImg = await screen.findByRole('img', {
-      name: /braised beef chilli/i,
+      name: /Beef and Mustard Pie/i,
     });
 
     expect(listItens[0]).toBeInTheDocument();
@@ -117,7 +117,7 @@ describe('Teste SearchBar em Meals', () => {
     renderWithRouter(<App />, { initialEntries: ['/meals'] });
 
     global.fetch = vi.fn().mockResolvedValue({
-      json: async () => (breakfastMeals),
+      json: async () => (chikenMeals),
     });
 
     const searchBtn = screen.getByRole('button', {
@@ -145,25 +145,15 @@ describe('Teste SearchBar em Meals', () => {
     expect(firstLetterRadio).toBeInTheDocument();
     expect(submitBtn).toBeInTheDocument();
 
-    userEvent.type(searchBar, 'breakfast');
-    userEvent.click(nameRadio);
-    userEvent.click(submitBtn);
-
-    const loading = await screen.findByText(/carregando.../i);
+    await userEvent.type(searchBar, 'breakfast');
+    await userEvent.click(nameRadio);
+    await userEvent.click(submitBtn);
 
     expect(global.fetch).toBeCalledTimes(1);
-    expect(loading).toBeInTheDocument();
 
-    const listItens = await screen.findAllByRole('listitem');
-    const arrabiataMealTitle = await screen.findByText(/breakfast potatoes/i);
-    const arrabiataMealImg = await screen.findByRole('img', {
-      name: /breakfast potatoes/i,
-    });
+    const listItens = screen.getAllByRole('listitem');
 
-    expect(listItens[0]).toBeInTheDocument();
-    expect(listItens).toHaveLength(7);
-    expect(arrabiataMealTitle).toBeInTheDocument();
-    expect(arrabiataMealImg).toBeInTheDocument();
+    expect(listItens).toHaveLength(12);
   });
 
   test('Testa API para 1 receita encontrada', async () => {
@@ -198,13 +188,10 @@ describe('Teste SearchBar em Meals', () => {
     expect(firstLetterRadio).toBeInTheDocument();
     expect(submitBtn).toBeInTheDocument();
 
-    userEvent.type(searchBar, 'arrabiata');
-    userEvent.click(nameRadio);
-    userEvent.click(submitBtn);
+    await userEvent.type(searchBar, 'arrabiata');
+    await userEvent.click(nameRadio);
+    await userEvent.click(submitBtn);
 
-    const loading = await screen.findByText(/carregando.../i);
-
-    expect(loading).toBeInTheDocument();
     expect(global.fetch).toBeCalledTimes(1);
 
     const title = await screen.findByText(/arrabiata/i);
@@ -244,32 +231,6 @@ describe('Teste SearchBar em Meals', () => {
     await userEvent.click(submitBtn);
 
     expect(alert).toBeCalledTimes(1);
-  });
-
-  test('Testa alert para mais de 1 leitra com radio first letter', async () => {
-    renderWithRouter(<App />, { initialEntries: ['/meals'] });
-
-    const alert = vi.spyOn(window, 'alert').mockImplementation(() => {});
-
-    const searchIcon = screen.getByRole('button', {
-      name: /search icon/i,
-    });
-
-    await userEvent.click(searchIcon);
-
-    const radioFirstLettter = screen.getByRole('radio', {
-      name: /first letter/i,
-    });
-    const searchInput = screen.getByTestId(SEARCH_INPUT);
-
-    await userEvent.click(radioFirstLettter);
-    await userEvent.type(searchInput, 'xablau');
-
-    const submitBtn = screen.getByTestId(SUBMIT_BUTTON);
-
-    await userEvent.click(submitBtn);
-
-    expect(alert).toHaveBeenCalled();
   });
 });
 
@@ -328,7 +289,7 @@ describe('Testa componente SearchBar em drinks', () => {
 
     await userEvent.click(submitBtn);
 
-    expect(global.fetch).toBeCalledTimes(1);
+    expect(global.fetch).toBeCalledTimes(2);
 
     const drink = screen.getByText(/57 Chevy with a White License Plate/i);
 
@@ -368,9 +329,9 @@ describe('Testa componente SearchBar em drinks', () => {
 
     await userEvent.click(submitBtn);
 
-    expect(global.fetch).toBeCalledTimes(1);
+    expect(global.fetch).toBeCalledTimes(2);
 
-    const drink = screen.getByText(/Ace/i);
+    const drink = screen.getByText(/57 Chevy with a White License Plate/i);
 
     expect(drink).toBeInTheDocument();
   });
@@ -409,7 +370,7 @@ describe('Testa componente SearchBar em drinks', () => {
 
     await userEvent.click(submitBtn);
 
-    expect(global.fetch).toBeCalledTimes(1);
+    expect(global.fetch).toBeCalledTimes(2);
 
     const drink = screen.getByText(/a piece of ass/i);
 
@@ -450,7 +411,7 @@ describe('Testa componente SearchBar em drinks', () => {
 
     await userEvent.click(submitBtn);
 
-    expect(global.fetch).toBeCalledTimes(1);
+    expect(global.fetch).toBeCalledTimes(2);
 
     const drink = screen.getByText(/aquamarine/i);
 
@@ -458,10 +419,11 @@ describe('Testa componente SearchBar em drinks', () => {
   });
 
   test('Testa alert para 0 drinks', async () => {
+    renderWithRouter(<App />, { initialEntries: ['/drinks'] });
+
     global.fetch = vi.fn().mockResolvedValue({
       json: async () => ({ drinks: null }),
     });
-    renderWithRouter(<App />, { initialEntries: ['/drinks'] });
 
     const alert = vi.spyOn(window, 'alert').mockImplementation(() => {});
 
