@@ -6,6 +6,7 @@ import Drinks from '../pages/Drinks';
 import Profile from '../pages/Profile';
 import MealId from '../pages/MealId';
 import DrinkId from '../pages/DrinkId';
+import RecipeDetails from '../components/Layout/components/RecipeDetails';
 
 function Router() {
   return (

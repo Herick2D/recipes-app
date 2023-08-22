@@ -11,6 +11,7 @@ export type Meal = {
   strCategory: string;
   strArea: string;
   strInstructions: string;
+  strYoutube: string;
 };
 
 export type Drink = {
