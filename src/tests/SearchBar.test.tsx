@@ -231,6 +231,18 @@ describe('Teste SearchBar em Meals', () => {
     await userEvent.click(submitBtn);
 
     expect(alert).toBeCalledTimes(1);
+
+    const radioFirst = screen.getByRole('radio', {
+      name: /first letter/i,
+    });
+
+    await userEvent.click(radioFirst);
+
+    expect(radioFirst).toBeChecked();
+
+    await userEvent.click(submitBtn);
+
+    expect(alert).toBeCalledTimes(3);
   });
 });
 
