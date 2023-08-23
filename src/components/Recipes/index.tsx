@@ -11,7 +11,7 @@ function Recipes({ recipes, pathname }: RecipesProps) {
     <ul>
       { recipes.length > 0
       && recipes.map((recipe, index) => (
-        <li key={ index + recipe.strTags }>
+        <li key={ recipe.strInstructions + recipe.strTags + recipe.strTags }>
           <Card location={ pathname } recipe={ recipe as Drink & Meal } index={ index } />
         </li>
       ))}
