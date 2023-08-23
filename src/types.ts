@@ -24,3 +24,7 @@ export type Drink = {
 };
 
 export type RadioType = 'ingredient' | 'name' | 'firstLetter';
+
+export type Categories = {
+  strCategory: string;
+};
