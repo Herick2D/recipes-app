@@ -14,7 +14,7 @@ function useCategories() {
     };
 
     getCategories();
-  }, [pathname]);
+  }, []);
 
   return {
     categories,

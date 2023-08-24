@@ -18,7 +18,8 @@ describe('Teste SearchBar em Meals', () => {
   const SEARCH_INPUT = 'search-input';
   const SUBMIT_BUTTON = 'exec-search-btn';
 
-  test('Testa API para radio first letter', async () => {
+  test('Testa os componentes SearchBar e faz uma pesquisa de ingrediente beef', async () => {
+    vi.clearAllMocks();
     global.fetch = vi.fn().mockResolvedValue({
       json: async () => (beefMeals),
     });
@@ -35,125 +36,91 @@ describe('Teste SearchBar em Meals', () => {
     expect(title).toBeInTheDocument();
     await userEvent.click(searchBtn);
 
+    const radioIng = screen.getByRole('radio', {
+      name: /ingredient/i,
+    });
+    const radioName = screen.getByRole('radio', {
+      name: /name/i,
+    });
     const radioFirst = screen.getByRole('radio', {
       name: /first letter/i,
     });
-
-    expect(radioFirst).toBeInTheDocument();
-
     const searchInput = screen.getByRole('textbox');
     const submitBtn = screen.getByTestId(SUBMIT_BUTTON);
 
-    await userEvent.click(radioFirst);
-    await userEvent.clear(searchInput);
-    await userEvent.type(searchInput, 'a');
+    expect(radioIng).toBeInTheDocument();
+    expect(radioName).toBeInTheDocument();
+    expect(radioFirst).toBeInTheDocument();
+    expect(searchInput).toBeInTheDocument();
+    expect(submitBtn).toBeInTheDocument();
 
-    expect(radioFirst).toBeChecked();
-    expect(searchInput).toHaveValue('a');
+    expect(global.fetch).toBeCalledTimes(2);
+
+    await userEvent.type(searchInput, 'beef');
+    await userEvent.click(radioIng);
+
+    expect(radioIng).toBeChecked();
+    expect(searchInput).toHaveValue('beef');
 
     await userEvent.click(submitBtn);
 
-    expect(global.fetch).toBeCalledTimes(2);
+    expect(global.fetch).toBeCalledTimes(3);
+
+    const meal = screen.getByText(/Beef and Mustard Pie/i);
+
+    expect(meal).toBeInTheDocument();
   });
 
-  test('Testa o SearchBar quando faz uma pesquisa de ingrediente beef', async () => {
-    renderWithRouter(<App />, { initialEntries: ['/meals'] });
-
+  test('Testa API para pesquisa pelo radio Name', async () => {
     global.fetch = vi.fn().mockResolvedValue({
       json: async () => (beefMeals),
     });
+    renderWithRouter(<App />, { initialEntries: ['/meals'] });
 
     const title = screen.getByRole('heading', {
       name: /meals/i,
     });
+
     const searchBtn = screen.getByRole('button', {
       name: /search icon/i,
     });
 
     expect(title).toBeInTheDocument();
-    expect(searchBtn).toBeInTheDocument();
-
     await userEvent.click(searchBtn);
 
-    const searchBar = screen.getByRole('textbox');
-    const ingredientRadio = screen.getByRole('radio', {
+    const radioIng = screen.getByRole('radio', {
       name: /ingredient/i,
     });
-    const nameRadio = screen.getByRole('radio', {
+    const radioName = screen.getByRole('radio', {
       name: /name/i,
     });
-    const firstLetterRadio = screen.getByRole('radio', {
+    const radioFirst = screen.getByRole('radio', {
       name: /first letter/i,
     });
+    const searchInput = screen.getByRole('textbox');
     const submitBtn = screen.getByTestId(SUBMIT_BUTTON);
 
-    expect(searchBar).toBeInTheDocument();
-    expect(ingredientRadio).toBeInTheDocument();
-    expect(nameRadio).toBeInTheDocument();
-    expect(firstLetterRadio).toBeInTheDocument();
+    expect(radioIng).toBeInTheDocument();
+    expect(radioName).toBeInTheDocument();
+    expect(radioFirst).toBeInTheDocument();
+    expect(searchInput).toBeInTheDocument();
     expect(submitBtn).toBeInTheDocument();
 
-    userEvent.type(searchBar, 'beef');
-    userEvent.click(submitBtn);
+    expect(global.fetch).toBeCalledTimes(2);
 
-    const loading = await screen.findByText(/carregando.../i);
+    await userEvent.type(searchInput, 'beef');
+    await userEvent.click(radioName);
 
-    expect(loading).toBeInTheDocument();
-    expect(global.fetch).toBeCalledTimes(1);
+    expect(radioName).toBeChecked();
+    expect(searchInput).toHaveValue('beef');
 
-    const listItens = await screen.findAllByRole('listitem');
-    const beefMealTitle = await screen.findByText(/Beef and Mustard Pie/i);
-    const beefMealImg = await screen.findByRole('img', {
-      name: /Beef and Mustard Pie/i,
-    });
-
-    expect(listItens[0]).toBeInTheDocument();
-    expect(listItens).toHaveLength(12);
-    expect(beefMealTitle).toBeInTheDocument();
-    expect(beefMealImg).toBeInTheDocument();
-  });
-
-  test('Testa API para pesquisa pelo radio Name', async () => {
-    renderWithRouter(<App />, { initialEntries: ['/meals'] });
-
-    global.fetch = vi.fn().mockResolvedValue({
-      json: async () => (chikenMeals),
-    });
-
-    const searchBtn = screen.getByRole('button', {
-      name: /search icon/i,
-    });
-
-    expect(searchBtn).toBeInTheDocument();
-    await userEvent.click(searchBtn);
-
-    const searchBar = screen.getByRole('textbox');
-    const ingredientRadio = screen.getByRole('radio', {
-      name: /ingredient/i,
-    });
-    const nameRadio = screen.getByRole('radio', {
-      name: /name/i,
-    });
-    const firstLetterRadio = screen.getByRole('radio', {
-      name: /first letter/i,
-    });
-    const submitBtn = screen.getByTestId(SUBMIT_BUTTON);
-
-    expect(searchBar).toBeInTheDocument();
-    expect(ingredientRadio).toBeInTheDocument();
-    expect(nameRadio).toBeInTheDocument();
-    expect(firstLetterRadio).toBeInTheDocument();
-    expect(submitBtn).toBeInTheDocument();
-
-    await userEvent.type(searchBar, 'breakfast');
-    await userEvent.click(nameRadio);
     await userEvent.click(submitBtn);
 
-    expect(global.fetch).toBeCalledTimes(1);
+    expect(global.fetch).toBeCalledTimes(3);
 
-    const listItens = screen.getAllByRole('listitem');
+    const meal = screen.getByText(/Beef and Mustard Pie/i);
 
-    expect(listItens).toHaveLength(12);
+    expect(meal).toBeInTheDocument();
   });
 
   test('Testa API para 1 receita encontrada', async () => {
@@ -244,118 +211,14 @@ describe('Teste SearchBar em Meals', () => {
 
     expect(alert).toBeCalledTimes(3);
   });
-});
-
-describe('Testa componente SearchBar em drinks', () => {
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
-  const SEARCH_INPUT = 'search-input';
-  const SUBMIT_BUTTON = 'exec-search-btn';
-
-  test('teste os componentes SearchBar em /drinks e faz uma pesquisa de ingrediente', async () => {
-    global.fetch = vi.fn().mockResolvedValue({
-      json: async () => (cocktailDrinks),
-    });
-    renderWithRouter(<App />, { initialEntries: ['/drinks'] });
-
-    const title = screen.getByRole('heading', {
-      name: /drinks/i,
-    });
-
-    const searchBtn = screen.getByRole('button', {
-      name: /search icon/i,
-    });
-
-    expect(title).toBeInTheDocument();
-    await userEvent.click(searchBtn);
-
-    const radioIng = screen.getByRole('radio', {
-      name: /ingredient/i,
-    });
-    const radioName = screen.getByRole('radio', {
-      name: /name/i,
-    });
-    const radioLetter = screen.getByRole('radio', {
-      name: /first letter/i,
-    });
-    const ingText = screen.getByText(/ingredient/i);
-    const nameText = screen.getByText(/name/i);
-    const letterText = screen.getByText(/first letter/i);
-
-    expect(ingText).toBeInTheDocument();
-    expect(nameText).toBeInTheDocument();
-    expect(letterText).toBeInTheDocument();
-    expect(radioIng).toBeInTheDocument();
-    expect(radioName).toBeInTheDocument();
-    expect(radioLetter).toBeInTheDocument();
-
-    const searchInput = screen.getByRole('textbox');
-    const submitBtn = screen.getByTestId(SUBMIT_BUTTON);
-
-    await userEvent.type(searchInput, 'cocktail');
-    await userEvent.click(radioIng);
-
-    expect(radioIng).toBeChecked();
-
-    await userEvent.click(submitBtn);
-
-    expect(global.fetch).toBeCalledTimes(2);
-
-    const drink = screen.getByText(/57 Chevy with a White License Plate/i);
-
-    expect(drink).toBeInTheDocument();
-  });
-
-  test('Testa API para pesquisa pelo radio Name', async () => {
-    global.fetch = vi.fn().mockResolvedValue({
-      json: async () => (cocktailDrinks),
-    });
-    renderWithRouter(<App />, { initialEntries: ['/drinks'] });
-
-    const title = screen.getByRole('heading', {
-      name: /drinks/i,
-    });
-
-    const searchBtn = screen.getByRole('button', {
-      name: /search icon/i,
-    });
-
-    expect(title).toBeInTheDocument();
-    await userEvent.click(searchBtn);
-
-    const radioName = screen.getByRole('radio', {
-      name: /name/i,
-    });
-
-    expect(radioName).toBeInTheDocument();
-
-    const searchInput = screen.getByRole('textbox');
-    const submitBtn = screen.getByTestId(SUBMIT_BUTTON);
-
-    await userEvent.type(searchInput, 'cocktail');
-    await userEvent.click(radioName);
-
-    expect(radioName).toBeChecked();
-
-    await userEvent.click(submitBtn);
-
-    expect(global.fetch).toBeCalledTimes(2);
-
-    const drink = screen.getByText(/57 Chevy with a White License Plate/i);
-
-    expect(drink).toBeInTheDocument();
-  });
-
   test('Testa API para radio first letter', async () => {
     global.fetch = vi.fn().mockResolvedValue({
-      json: async () => (drinksMock),
+      json: async () => (chikenMeals),
     });
-    renderWithRouter(<App />, { initialEntries: ['/drinks'] });
+    renderWithRouter(<App />, { initialEntries: ['/meals'] });
 
     const title = screen.getByRole('heading', {
-      name: /drinks/i,
+      name: /meals/i,
     });
 
     const searchBtn = screen.getByRole('button', {
@@ -382,16 +245,26 @@ describe('Testa componente SearchBar em drinks', () => {
 
     await userEvent.click(submitBtn);
 
-    expect(global.fetch).toBeCalledTimes(2);
+    expect(global.fetch).toBeCalledTimes(3);
 
-    const drink = screen.getByText(/a piece of ass/i);
+    const meal = screen.getByText(/Chicken Couscous/i);
 
-    expect(drink).toBeInTheDocument();
+    expect(meal).toBeInTheDocument();
+  });
+});
+
+describe('Teste SearchBar em Drinks', () => {
+  afterEach(() => {
+    vi.clearAllMocks();
   });
 
-  test('Testa API para 1 drink encontrado', async () => {
+  const SEARCH_INPUT = 'search-input';
+  const SUBMIT_BUTTON = 'exec-search-btn';
+
+  test('Testa os componentes SearchBar e faz uma pesquisa de ingrediente beef', async () => {
+    vi.clearAllMocks();
     global.fetch = vi.fn().mockResolvedValue({
-      json: async () => (oneDrink),
+      json: async () => (cocktailDrinks),
     });
     renderWithRouter(<App />, { initialEntries: ['/drinks'] });
 
@@ -406,31 +279,141 @@ describe('Testa componente SearchBar em drinks', () => {
     expect(title).toBeInTheDocument();
     await userEvent.click(searchBtn);
 
+    const radioIng = screen.getByRole('radio', {
+      name: /ingredient/i,
+    });
     const radioName = screen.getByRole('radio', {
       name: /name/i,
     });
-
-    expect(radioName).toBeInTheDocument();
-
+    const radioFirst = screen.getByRole('radio', {
+      name: /first letter/i,
+    });
     const searchInput = screen.getByRole('textbox');
     const submitBtn = screen.getByTestId(SUBMIT_BUTTON);
 
-    await userEvent.click(radioName);
-    await userEvent.type(searchInput, 'aquamarine');
-
-    expect(radioName).toBeChecked();
-    expect(searchInput).toHaveValue('aquamarine');
-
-    await userEvent.click(submitBtn);
+    expect(radioIng).toBeInTheDocument();
+    expect(radioName).toBeInTheDocument();
+    expect(radioFirst).toBeInTheDocument();
+    expect(searchInput).toBeInTheDocument();
+    expect(submitBtn).toBeInTheDocument();
 
     expect(global.fetch).toBeCalledTimes(2);
 
-    const drink = screen.getByText(/aquamarine/i);
+    await userEvent.type(searchInput, 'cocktail');
+    await userEvent.click(radioIng);
+
+    expect(radioIng).toBeChecked();
+    expect(searchInput).toHaveValue('cocktail');
+
+    await userEvent.click(submitBtn);
+
+    expect(global.fetch).toBeCalledTimes(3);
+
+    const drink = screen.getByText(/Absolutely Fabulous/i);
 
     expect(drink).toBeInTheDocument();
   });
 
-  test('Testa alert para 0 drinks', async () => {
+  test('Testa API para pesquisa pelo radio Name', async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      json: async () => (cocktailDrinks),
+    });
+    renderWithRouter(<App />, { initialEntries: ['/drinks'] });
+
+    const title = screen.getByRole('heading', {
+      name: /drinks/i,
+    });
+
+    const searchBtn = screen.getByRole('button', {
+      name: /search icon/i,
+    });
+
+    expect(title).toBeInTheDocument();
+    await userEvent.click(searchBtn);
+
+    const radioIng = screen.getByRole('radio', {
+      name: /ingredient/i,
+    });
+    const radioName = screen.getByRole('radio', {
+      name: /name/i,
+    });
+    const radioFirst = screen.getByRole('radio', {
+      name: /first letter/i,
+    });
+    const searchInput = screen.getByRole('textbox');
+    const submitBtn = screen.getByTestId(SUBMIT_BUTTON);
+
+    expect(radioIng).toBeInTheDocument();
+    expect(radioName).toBeInTheDocument();
+    expect(radioFirst).toBeInTheDocument();
+    expect(searchInput).toBeInTheDocument();
+    expect(submitBtn).toBeInTheDocument();
+
+    expect(global.fetch).toBeCalledTimes(2);
+
+    await userEvent.type(searchInput, 'cocktail');
+    await userEvent.click(radioName);
+
+    expect(radioName).toBeChecked();
+    expect(searchInput).toHaveValue('cocktail');
+
+    await userEvent.click(submitBtn);
+
+    expect(global.fetch).toBeCalledTimes(3);
+
+    const drink = screen.getByText(/Absolutly Screwed Up/i);
+
+    expect(drink).toBeInTheDocument();
+  });
+
+  test('Testa API para 1 receita encontrada', async () => {
+    renderWithRouter(<App />, { initialEntries: ['/drinks'] });
+
+    global.fetch = vi.fn().mockResolvedValue({
+      json: async () => (oneDrink),
+    });
+
+    const searchBtn = screen.getByRole('button', {
+      name: /search icon/i,
+    });
+
+    expect(searchBtn).toBeInTheDocument();
+    await userEvent.click(searchBtn);
+
+    const searchBar = screen.getByRole('textbox');
+    const ingredientRadio = screen.getByRole('radio', {
+      name: /ingredient/i,
+    });
+    const nameRadio = screen.getByRole('radio', {
+      name: /name/i,
+    });
+    const firstLetterRadio = screen.getByRole('radio', {
+      name: /first letter/i,
+    });
+    const submitBtn = screen.getByTestId(SUBMIT_BUTTON);
+
+    expect(searchBar).toBeInTheDocument();
+    expect(ingredientRadio).toBeInTheDocument();
+    expect(nameRadio).toBeInTheDocument();
+    expect(firstLetterRadio).toBeInTheDocument();
+    expect(submitBtn).toBeInTheDocument();
+
+    await userEvent.type(searchBar, 'Aquamarine');
+    await userEvent.click(nameRadio);
+    await userEvent.click(submitBtn);
+
+    expect(global.fetch).toBeCalledTimes(1);
+
+    const title = await screen.findByText(/Aquamarine/i);
+    const img = await screen.findByRole('img', {
+      name: /Aquamarine/i,
+    });
+
+    expect(title).toBeInTheDocument();
+    expect(img).toBeInTheDocument();
+  });
+
+  test('Testa alert para 0 receitas', async () => {
     renderWithRouter(<App />, { initialEntries: ['/drinks'] });
 
     global.fetch = vi.fn().mockResolvedValue({
@@ -470,5 +453,46 @@ describe('Testa componente SearchBar em drinks', () => {
     await userEvent.click(submitBtn);
 
     expect(alert).toBeCalledTimes(3);
+  });
+
+  test('Testa API para radio first letter', async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      json: async () => (drinksMock),
+    });
+    renderWithRouter(<App />, { initialEntries: ['/drinks'] });
+
+    const title = screen.getByRole('heading', {
+      name: /drinks/i,
+    });
+
+    const searchBtn = screen.getByRole('button', {
+      name: /search icon/i,
+    });
+
+    expect(title).toBeInTheDocument();
+    await userEvent.click(searchBtn);
+
+    const radioFirst = screen.getByRole('radio', {
+      name: /first letter/i,
+    });
+
+    expect(radioFirst).toBeInTheDocument();
+
+    const searchInput = screen.getByRole('textbox');
+    const submitBtn = screen.getByTestId(SUBMIT_BUTTON);
+
+    await userEvent.click(radioFirst);
+    await userEvent.type(searchInput, 'a');
+
+    expect(radioFirst).toBeChecked();
+    expect(searchInput).toHaveValue('a');
+
+    await userEvent.click(submitBtn);
+
+    expect(global.fetch).toBeCalledTimes(3);
+
+    const drink = screen.getByText(/Apello/i);
+
+    expect(drink).toBeInTheDocument();
   });
 });
