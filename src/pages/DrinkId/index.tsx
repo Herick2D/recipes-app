@@ -5,7 +5,7 @@ import { Drink } from '../../types';
 function DrinkId() {
   const { recipies } = useContext(RecipiesContexts);
   const drink = recipies as Drink[];
-  const [entriesDrink, setEntriesDrink] = useState<[string, string][]>();
+  const [entriesDrink, setEntriesDrink] = useState<[string, string][]>([]);
 
   useEffect(() => {
     setEntriesDrink(Object.entries(drink[0]));
