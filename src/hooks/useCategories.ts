@@ -10,7 +10,8 @@ function useCategories() {
   useEffect(() => {
     const getCategories = async () => {
       const response = await fetchCategories(pathname);
-      setCategories(response.meals || response.drinks);
+      if (pathname === '/meals') setCategories(response.meals);
+      if (pathname === '/drinks') setCategories(response.drinks);
     };
 
     getCategories();
