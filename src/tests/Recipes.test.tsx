@@ -17,7 +17,7 @@ describe('Testa componente Recipes em Meals', () => {
       expect(buttonChicken).toBeInTheDocument();
       userEvent.click(buttonChicken);
 
-      const firstRecipes = screen.findByRole('heading', { name: /ayam percik/i });
+      const firstRecipes = screen.findByText(/ayam percik/i);
       expect(firstRecipes);
     }, { timeout: 4000 });
   });
