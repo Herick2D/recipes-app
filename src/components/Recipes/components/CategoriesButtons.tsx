@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import useCategories from '../../../hooks/useCategories';
 import { RecipesContexts } from '../../../contexts/recipesContexts';
 import { fetchRecipesByCategory } from '../../../services/fetchCategories';
