@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Box, Stack, Typography } from '@mui/material';
 import { Drink, Meal } from '../../../types';
 
 type CardProps = {
@@ -13,16 +14,22 @@ function Card({ location, recipe, index }: CardProps) {
     <Link
       to={ `${location}/${location === '/meals' ? idMeal : idDrink}` }
     >
-      <div data-testid={ `${index}-recipe-card` }>
-        <img
+      <Stack
+        direction="column"
+        data-testid={ `${index}-recipe-card` }
+      >
+        <Box
+          component="img"
+          width={ 150 }
+          height={ 150 }
           data-testid={ `${index}-card-img` }
           src={ location === '/meals' ? recipe.strMealThumb : recipe.strDrinkThumb }
           alt={ location === '/meals' ? recipe.strMeal : recipe.strDrink }
         />
-        <h3 data-testid={ `${index}-card-name` }>
+        <Typography data-testid={ `${index}-card-name` }>
           {location === '/meals' ? recipe.strMeal : recipe.strDrink}
-        </h3>
-      </div>
+        </Typography>
+      </Stack>
     </Link>
   );
 }

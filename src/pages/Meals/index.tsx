@@ -5,19 +5,26 @@ import Recipes from '../../components/Recipes';
 import { fetchGeneric } from '../../services/fetchGeneric';
 
 function Meals() {
-  const { recipes, isLoading, setRecipes, setIsLoading } = useContext(RecipesContexts);
+  const {
+    recipes,
+    isLoading,
+    setRecipes,
+    setIsLoading,
+    setGeneralRecipes,
+  } = useContext(RecipesContexts);
   const [mealsArray, setMealsArray] = useState<Meal[]>([]);
 
   useEffect(() => {
     const fetchMeals = async () => {
       setIsLoading(true);
       const data = await fetchGeneric('/meals');
-      setIsLoading(false);
+      setGeneralRecipes(data.meals);
       setRecipes(data.meals);
+      setIsLoading(false);
     };
 
     fetchMeals();
-  }, [setRecipes]);
+  }, []);
 
   useEffect(() => {
     const MAX_RECIPES = 12;

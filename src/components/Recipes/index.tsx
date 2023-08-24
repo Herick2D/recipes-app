@@ -10,11 +10,11 @@ type RecipesProps = {
 function Recipes({ recipes, pathname }: RecipesProps) {
   return (
     <>
-      <CategoriesButtons />
+      <CategoriesButtons pathname={ pathname } />
       <ul>
         { recipes.length > 0
       && recipes.map((recipe, index) => (
-        <li key={ recipe.strInstructions + recipe.strTags + recipe.strTags }>
+        <li key={ index }>
           <Card location={ pathname } recipe={ recipe as Drink & Meal } index={ index } />
         </li>
       ))}
