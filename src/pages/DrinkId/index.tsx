@@ -1,10 +1,10 @@
 import { useContext } from 'react';
-import { RecipiesContexts } from '../../contexts/recipiesContexts';
+import { RecipesContexts } from '../../contexts/recipesContexts';
 import { Drink } from '../../types';
 
 function DrinkId() {
-  const { recipies } = useContext(RecipiesContexts);
-  const drink = recipies as Drink[];
+  const { recipes } = useContext(RecipesContexts);
+  const drink = recipes as Drink[];
 
   return (
     drink.map((item) => (

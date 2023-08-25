@@ -1,10 +1,21 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { renderWithRouter } from './helpers/renderWithRouter';
 import App from '../App';
+import { MealsCategoryMock } from './helpers/categoriesMock';
+import beefMeals from './helpers/beefMealsMock';
 
 describe(('Testando a página de Login'), () => {
   test('Testando o formulário da página de Login', async () => {
+    global.fetch = vi.fn()
+      .mockResolvedValue({
+        json: async () => (beefMeals),
+      })
+      .mockResolvedValueOnce({
+        json: async () => (MealsCategoryMock),
+      });
+
     renderWithRouter(<App />);
 
     const emailInput = screen.getByTestId('email-input');

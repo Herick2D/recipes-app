@@ -1,13 +1,13 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Router } from './routes';
-import { RecipiesProvider } from './contexts/recipiesContexts';
+import { RecipesProvider } from './contexts/recipesContexts';
 
 function App() {
   return (
-    <RecipiesProvider>
+    <RecipesProvider>
       <Router />
-    </RecipiesProvider>
+    </RecipesProvider>
 
   );
 }
