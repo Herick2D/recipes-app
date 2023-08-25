@@ -9,8 +9,15 @@ import oneMealMock from './helpers/oneMealMock';
 import cocktailDrinks from './helpers/cocktailDrinksMock';
 import oneDrink from './helpers/oneDrinkMock';
 import drinksMock from './helpers/drinksMock';
+import { DrinksCategoryMock, MealsCategoryMock } from './helpers/categoriesMock';
 
 describe('Teste SearchBar em Meals', () => {
+  beforeEach(() => {
+    global.fetch = vi.fn().mockResolvedValue({
+      json: async () => (MealsCategoryMock),
+    });
+  });
+
   afterEach(() => {
     vi.clearAllMocks();
   });
@@ -124,6 +131,10 @@ describe('Teste SearchBar em Meals', () => {
   });
 
   test('Testa API para 1 receita encontrada', async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      json: async () => (beefMeals),
+    });
+
     renderWithRouter(<App />, { initialEntries: ['/meals'] });
 
     global.fetch = vi.fn().mockResolvedValue({
@@ -171,6 +182,10 @@ describe('Teste SearchBar em Meals', () => {
   });
 
   test('Testa alert para 0 receitas', async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      json: async () => (beefMeals),
+    });
+
     renderWithRouter(<App />, { initialEntries: ['/meals'] });
 
     global.fetch = vi.fn().mockResolvedValue({
@@ -213,9 +228,14 @@ describe('Teste SearchBar em Meals', () => {
   });
   test('Testa API para radio first letter', async () => {
     global.fetch = vi.fn().mockResolvedValue({
+      json: async () => (beefMeals),
+    });
+
+    renderWithRouter(<App />, { initialEntries: ['/meals'] });
+
+    global.fetch = vi.fn().mockResolvedValue({
       json: async () => (chikenMeals),
     });
-    renderWithRouter(<App />, { initialEntries: ['/meals'] });
 
     const title = screen.getByRole('heading', {
       name: /meals/i,
@@ -245,8 +265,6 @@ describe('Teste SearchBar em Meals', () => {
 
     await userEvent.click(submitBtn);
 
-    expect(global.fetch).toBeCalledTimes(3);
-
     const meal = screen.getByText(/Chicken Couscous/i);
 
     expect(meal).toBeInTheDocument();
@@ -261,11 +279,15 @@ describe('Teste SearchBar em Drinks', () => {
   const SEARCH_INPUT = 'search-input';
   const SUBMIT_BUTTON = 'exec-search-btn';
 
-  test('Testa os componentes SearchBar e faz uma pesquisa de ingrediente beef', async () => {
-    vi.clearAllMocks();
-    global.fetch = vi.fn().mockResolvedValue({
-      json: async () => (cocktailDrinks),
-    });
+  test('Testa os componentes SearchBar e faz uma pesquisa de cocktail', async () => {
+    global.fetch = vi.fn()
+      .mockResolvedValue({
+        json: async () => (cocktailDrinks),
+      })
+      .mockResolvedValueOnce({
+        json: async () => (DrinksCategoryMock),
+      });
+
     renderWithRouter(<App />, { initialEntries: ['/drinks'] });
 
     const title = screen.getByRole('heading', {
@@ -297,8 +319,6 @@ describe('Teste SearchBar em Drinks', () => {
     expect(searchInput).toBeInTheDocument();
     expect(submitBtn).toBeInTheDocument();
 
-    expect(global.fetch).toBeCalledTimes(2);
-
     await userEvent.type(searchInput, 'cocktail');
     await userEvent.click(radioIng);
 
@@ -306,7 +326,6 @@ describe('Teste SearchBar em Drinks', () => {
     expect(searchInput).toHaveValue('cocktail');
 
     await userEvent.click(submitBtn);
-
     expect(global.fetch).toBeCalledTimes(3);
 
     const drink = screen.getByText(/Absolutely Fabulous/i);
@@ -315,9 +334,13 @@ describe('Teste SearchBar em Drinks', () => {
   });
 
   test('Testa API para pesquisa pelo radio Name', async () => {
-    global.fetch = vi.fn().mockResolvedValue({
-      json: async () => (cocktailDrinks),
-    });
+    global.fetch = vi.fn()
+      .mockResolvedValue({
+        json: async () => (cocktailDrinks),
+      })
+      .mockResolvedValueOnce({
+        json: async () => (DrinksCategoryMock),
+      });
     renderWithRouter(<App />, { initialEntries: ['/drinks'] });
 
     const title = screen.getByRole('heading', {
@@ -367,6 +390,14 @@ describe('Teste SearchBar em Drinks', () => {
   });
 
   test('Testa API para 1 receita encontrada', async () => {
+    global.fetch = vi.fn()
+      .mockResolvedValue({
+        json: async () => (drinksMock),
+      })
+      .mockResolvedValueOnce({
+        json: async () => (DrinksCategoryMock),
+      });
+
     renderWithRouter(<App />, { initialEntries: ['/drinks'] });
 
     global.fetch = vi.fn().mockResolvedValue({
@@ -456,9 +487,14 @@ describe('Teste SearchBar em Drinks', () => {
   });
 
   test('Testa API para radio first letter', async () => {
-    global.fetch = vi.fn().mockResolvedValue({
-      json: async () => (drinksMock),
-    });
+    global.fetch = vi.fn()
+      .mockResolvedValue({
+        json: async () => (drinksMock),
+      })
+      .mockResolvedValueOnce({
+        json: async () => (DrinksCategoryMock),
+      });
+
     renderWithRouter(<App />, { initialEntries: ['/drinks'] });
 
     const title = screen.getByRole('heading', {

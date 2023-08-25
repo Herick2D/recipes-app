@@ -1,18 +1,24 @@
 import { screen } from '@testing-library/react';
 import { vi } from 'vitest';
 import App from '../App';
-import { mockMeals, mockMealsCategories, renderWithRouterAndMock } from './helpers/renderWithRouterAndMock';
+import beefMeals from './helpers/beefMealsMock';
+import { MealsCategoryMock } from './helpers/categoriesMock';
+import { renderWithRouter } from './helpers/renderWithRouter';
 
 describe('Testa componente Recipes em Meals', () => {
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
   test('Verifica os botões de categorias em /Meals', async () => {
-    renderWithRouterAndMock(<App />, mockMealsCategories, '/meals');
+    global.fetch = vi.fn()
+      .mockResolvedValue({
+        json: async () => (beefMeals),
+      })
+      .mockResolvedValueOnce({
+        json: async () => (MealsCategoryMock),
+      });
+
+    renderWithRouter(<App />, { initialEntries: ['/meals'] });
 
     global.fetch = vi.fn().mockResolvedValue({
-      json: async () => (mockMeals),
+      json: async () => (beefMeals),
     });
 
     const beefBtn = await screen.findByTestId('Beef-category-filter');

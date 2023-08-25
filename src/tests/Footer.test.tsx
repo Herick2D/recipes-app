@@ -20,6 +20,9 @@ describe('Testando componente Footer', () => {
     const drinksBtn = screen.getByTestId('drinks-bottom-btn');
     const Title = screen.getByTestId('page-title');
 
+    expect(mealsBtn).toBeInTheDocument();
+    expect(drinksBtn).toBeInTheDocument();
+
     await userEvent.click(drinksBtn);
     waitFor(() => expect(Title).toHaveTextContent('Drinks'));
 
