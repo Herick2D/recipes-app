@@ -4,8 +4,6 @@ import Meals from '../pages/Meals';
 import Layout from '../components/Layout';
 import Drinks from '../pages/Drinks';
 import Profile from '../pages/Profile';
-import MealId from '../pages/MealId';
-import DrinkId from '../pages/DrinkId';
 import Recipe from '../pages/Recipe';
 
 function Router() {
