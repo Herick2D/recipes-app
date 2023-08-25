@@ -19,10 +19,10 @@ describe('Teste SearchBar em Meals', () => {
   const SUBMIT_BUTTON = 'exec-search-btn';
 
   test('Testa os componentes SearchBar e faz uma pesquisa de ingrediente beef', async () => {
-    vi.clearAllMocks();
     global.fetch = vi.fn().mockResolvedValue({
       json: async () => (beefMeals),
     });
+
     renderWithRouter(<App />, { initialEntries: ['/meals'] });
 
     const title = screen.getByRole('heading', {

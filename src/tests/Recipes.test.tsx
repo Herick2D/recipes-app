@@ -1,34 +1,32 @@
-import { screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { screen } from '@testing-library/react';
 import { vi } from 'vitest';
 import App from '../App';
-import { renderWithRouter } from './helpers/renderWithRouter';
+import { mockMeals, mockMealsCategories, renderWithRouterAndMock } from './helpers/renderWithRouterAndMock';
 
 describe('Testa componente Recipes em Meals', () => {
   afterEach(() => {
     vi.clearAllMocks();
   });
 
-  test('Verifica se os alimentos da categoria chicken', async () => {
-    renderWithRouter(<App />, { initialEntries: ['/meals'] });
+  test('Verifica os botões de categorias em /Meals', async () => {
+    renderWithRouterAndMock(<App />, mockMealsCategories, '/meals');
 
-    await waitFor(async () => {
-      const buttonChicken = screen.getByRole('button', { name: /chicken/i });
-      expect(buttonChicken).toBeInTheDocument();
-      userEvent.click(buttonChicken);
+    global.fetch = vi.fn().mockResolvedValue({
+      json: async () => (mockMeals),
+    });
 
-      const firstRecipes = screen.findByText(/ayam percik/i);
-      expect(firstRecipes);
-    }, { timeout: 4000 });
-  });
+    const beefBtn = await screen.findByTestId('Beef-category-filter');
+    const breakfastBtn = await screen.findByTestId('Breakfast-category-filter');
+    const chickenBtn = await screen.findByTestId('Chicken-category-filter');
+    const dessertBtn = await screen.findByTestId('Dessert-category-filter');
+    const goatBtn = await screen.findByTestId('Goat-category-filter');
+    const allBtn = await screen.findByTestId('All-category-filter');
 
-  test('Testa o botão All', async () => {
-    renderWithRouter(<App />, { initialEntries: ['/meals'] });
-
-    await waitFor(async () => {
-      const buttonAll = screen.getByRole('button', { name: /all/i });
-      expect(buttonAll).toBeInTheDocument();
-      userEvent.click(buttonAll);
-    }, { timeout: 3000 });
+    expect(beefBtn).toBeInTheDocument();
+    expect(breakfastBtn).toBeInTheDocument();
+    expect(chickenBtn).toBeInTheDocument();
+    expect(dessertBtn).toBeInTheDocument();
+    expect(goatBtn).toBeInTheDocument();
+    expect(allBtn).toBeInTheDocument();
   });
 });

@@ -35,7 +35,7 @@ function CategoriesButtons({ pathname }: { pathname: string }) {
           type="button"
           id={ category.strCategory }
           data-testid={ `${category.strCategory}-category-filter` }
-          key={ index + category.strCategory }
+          key={ index + Date.now() }
         >
           {category.strCategory}
         </button>
