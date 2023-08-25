@@ -10,7 +10,7 @@ describe('Testando componente Footer', () => {
     vi.clearAllMocks();
   });
   beforeEach(async () => {
-    vi.spyOn(global, 'fetch').mockImplementation(mockFetch as any);
+    global.fetch = vi.fn().mockImplementation(mockFetch as any);
   });
 
   test('Testando o redirecionamento do botão do Fotter de /meals para /drinks', async () => {
