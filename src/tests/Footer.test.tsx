@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import App from '../App';
@@ -13,7 +13,7 @@ describe('Testando componente Footer', () => {
     global.fetch = vi.fn().mockImplementation(mockFetch as any);
   });
 
-  test('Testando o redirecionamento do botão do Fotter de /meals para /drinks', async () => {
+  test('Testando o redirecionamento do botão do Footer de /meals para /drinks', async () => {
     renderWithRouter(<App />, { initialEntries: ['/meals'] });
 
     expect(global.fetch).toHaveBeenCalledTimes(2);
@@ -31,7 +31,7 @@ describe('Testando componente Footer', () => {
     expect(newTitle).toBeInTheDocument();
   });
 
-  test('Testando o redirecionamento do botão do Fotter de /drinks para /meals', async () => {
+  test('Testando o redirecionamento do botão do Footer de /drinks para /meals', async () => {
     renderWithRouter(<App />, { initialEntries: ['/drinks'] });
 
     expect(global.fetch).toHaveBeenCalledTimes(2);
