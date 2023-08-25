@@ -1,9 +1,11 @@
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../App';
 import { renderWithRouter } from './helpers/renderWithRouter';
 
 describe('Testando componente Footer', () => {
+  const TITLE_TEST_ID = 'page-title';
+
   test('Testando o Footer em /meals', async () => {
     renderWithRouter(<App />, { initialEntries: ['/meals'] });
 
@@ -18,15 +20,17 @@ describe('Testando componente Footer', () => {
 
     const mealsBtn = screen.getByTestId('meals-bottom-btn');
     const drinksBtn = screen.getByTestId('drinks-bottom-btn');
-    const Title = screen.getByTestId('page-title');
 
     expect(mealsBtn).toBeInTheDocument();
     expect(drinksBtn).toBeInTheDocument();
 
     await userEvent.click(drinksBtn);
-    waitFor(() => expect(Title).toHaveTextContent('Drinks'));
+
+    expect(await screen.findByTestId(TITLE_TEST_ID)).toHaveTextContent('Drinks');
 
     await userEvent.click(mealsBtn);
-    waitFor(() => expect(Title).toHaveTextContent('Meals'));
+
+    expect(await screen.findByTestId(TITLE_TEST_ID)).toHaveTextContent('Meals');
+    screen.debug();
   });
 });
