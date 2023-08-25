@@ -1,15 +1,17 @@
-import { useContext, useEffect, useState } from 'react';
-import { RecipiesContexts } from '../../contexts/recipiesContexts';
+import { useEffect, useState } from 'react';
 import { Drink } from '../../types';
+import useFetchById from '../../hooks/useFetchById';
 
 function DrinkId() {
-  const { recipies } = useContext(RecipiesContexts);
-  const drink = recipies as Drink[];
+  const { data, loading } = useFetchById();
+  const drink = data as Drink[];
   const [entriesDrink, setEntriesDrink] = useState<[string, string][]>([]);
 
   useEffect(() => {
-    setEntriesDrink(Object.entries(drink[0]));
+    if (drink[0]) { setEntriesDrink(Object.entries(drink[0])); }
   }, [drink]);
+
+  if (loading) return <h1>Loading...</h1>;
 
   return (
     drink.map((item) => (
@@ -41,6 +43,7 @@ function DrinkId() {
             return null;
           })}
         </ul>
+        <p data-testid="instructions">{item.strInstructions}</p>
       </div>
     ))
   );

@@ -1,20 +1,28 @@
-import { useContext, useEffect, useState } from 'react';
-import { RecipiesContexts } from '../../contexts/recipiesContexts';
+import { useEffect, useState } from 'react';
 import { Meal } from '../../types';
+import useFetchById from '../../hooks/useFetchById';
 
 function MealId() {
-  const { recipies } = useContext(RecipiesContexts);
-  const meal = recipies as Meal[];
   const [entriesMeal, setEntriesMeal] = useState<[string, string][]>([]);
+  const { data, loading } = useFetchById();
+  const meal = data as Meal[];
 
   useEffect(() => {
-    setEntriesMeal(Object.entries(meal[0]));
+    if (meal[0]) {
+      setEntriesMeal(Object.entries(meal[0]));
+    }
   }, [meal]);
+
+  if (loading) return <h1>Loading...</h1>;
 
   return (
     meal.map((item) => (
       <div key={ item.idMeal }>
-        <h1>{ item.strMeal }</h1>
+        <h1 data-testid="recipe-title">{ item.strMeal }</h1>
+        <p data-testid="recipe-category">
+          {' '}
+          { item.strCategory }
+        </p>
         <img
           src={ item.strMealThumb }
           alt={ item.strMeal }
@@ -35,6 +43,16 @@ function MealId() {
             return null;
           })}
         </ul>
+        <p data-testid="instructions">{item.strInstructions}</p>
+        <iframe
+          data-testid="video"
+          width="560"
+          height="315"
+          src={ item.strYoutube.replace('watch?v=', 'embed/') }
+          title="YouTube video player"
+          allow="accelerometer; autoplay; clipboard-write;
+          encrypted-media; gyroscope; picture-in-picture; web-share"
+        />
       </div>
     ))
   );
