@@ -1,36 +1,53 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import App from '../App';
 import { renderWithRouter } from './helpers/renderWithRouter';
+import mockFetch from './helpers/mockFetch';
 
 describe('Testando componente Footer', () => {
-  const TITLE_TEST_ID = 'page-title';
-
-  test('Testando o Footer em /meals', async () => {
-    renderWithRouter(<App />, { initialEntries: ['/meals'] });
-
-    const mealsBtn = screen.getByTestId('drinks-bottom-btn');
-    const drinksBtn = screen.getByTestId('meals-bottom-btn');
-
-    expect(mealsBtn).toBeInTheDocument();
-    expect(drinksBtn).toBeInTheDocument();
+  afterEach(() => {
+    vi.clearAllMocks();
   });
-  test('Testando os CLicker do Footer', async () => {
+  beforeEach(async () => {
+    vi.spyOn(global, 'fetch').mockImplementation(mockFetch as any);
+  });
+
+  test('Testando o redirecionamento do botão do Fotter de /meals para /drinks', async () => {
     renderWithRouter(<App />, { initialEntries: ['/meals'] });
 
-    const mealsBtn = screen.getByTestId('meals-bottom-btn');
-    const drinksBtn = screen.getByTestId('drinks-bottom-btn');
+    expect(global.fetch).toHaveBeenCalledTimes(2);
 
-    expect(mealsBtn).toBeInTheDocument();
-    expect(drinksBtn).toBeInTheDocument();
+    const title = await screen.findByRole('heading', { name: /meals/i });
 
-    await userEvent.click(drinksBtn);
+    expect(title).toBeInTheDocument();
 
-    expect(await screen.findByTestId(TITLE_TEST_ID)).toHaveTextContent('Drinks');
+    const button = await screen.findByRole('img', { name: /drink/i });
 
-    await userEvent.click(mealsBtn);
+    userEvent.click(button);
 
-    expect(await screen.findByTestId(TITLE_TEST_ID)).toHaveTextContent('Meals');
-    screen.debug();
+    const newTitle = await screen.findByRole('heading', { name: 'Drinks' });
+
+    expect(newTitle).toBeInTheDocument();
+  });
+
+  test('Testando o redirecionamento do botão do Fotter de /drinks para /meals', async () => {
+    renderWithRouter(<App />, { initialEntries: ['/drinks'] });
+
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+
+    const title = await screen.findByRole('heading', { name: 'Drinks' });
+
+    expect(title).toBeInTheDocument();
+
+    const button = screen.getByRole('img', {
+      name: /food-button/i,
+    });
+
+    userEvent.click(button);
+
+    const newTitle = await screen.findByRole('heading', { name: 'Meals' });
+
+    expect(newTitle).toBeInTheDocument();
   });
 });
