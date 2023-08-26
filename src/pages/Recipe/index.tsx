@@ -1,11 +1,14 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Button } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
+import ShareIcon from '@mui/icons-material/Share';
+import isFavoriteIcon from '../../images/blackHeartIcon.svg';
+import favoriteIcon from '../../images/whiteHeartIcon.svg';
 import useFetchById from '../../hooks/useFetchById';
 import RecipeInfos from './components/RecipeInfos';
 import useFetchGeneric from '../../hooks/useFetchGeneric';
 import Carousel from './components/Carousel';
-import { DoneRecipe, InProgressRecipes } from '../../types';
+import { DoneRecipe, FavoriteRecipe, InProgressRecipes } from '../../types';
 import useLocalStorage from '../../hooks/useLocalStorage';
 
 function Recipe() {
@@ -13,6 +16,8 @@ function Recipe() {
   const [inProgressRecipes,
     setInprogressRecipes] = useState<InProgressRecipes>({} as InProgressRecipes);
   const [doneRecipes, setDoneRecipes] = useState<DoneRecipe[]>([]);
+  const [favorite, setFavorite] = useState(false);
+  const [shareLink, setShareLink] = useState(false);
 
   const { data, loading } = useFetchById();
   const { drinksRecipes, mealsRecipes } = useFetchGeneric();
@@ -20,7 +25,13 @@ function Recipe() {
   const {
     value: valueInProgress,
   } = useLocalStorage('inProgressRecipes', JSON.stringify(inProgressRecipes));
+  const {
+    value: valueFavorites,
+    updateValue: updateValueFavorites,
+  } = useLocalStorage('favoriteRecipes', JSON.stringify([] as FavoriteRecipe[]));
+
   const { pathname } = useLocation();
+  const navigate = useNavigate();
 
   const isMeals = pathname.includes('meals');
   const recipeId = pathname.split('/')[2];
@@ -37,7 +48,57 @@ function Recipe() {
   useEffect(() => {
     setDoneRecipes(JSON.parse(value));
     setInprogressRecipes(JSON.parse(valueInProgress));
-  }, [value, valueInProgress]);
+    setFavorite(JSON.parse(valueFavorites)
+      .find((element: FavoriteRecipe) => element.id === recipeId));
+  }, [value, valueInProgress, valueFavorites]);
+
+  const handleClick = () => {
+    if (!isInProgress) {
+      setInprogressRecipes({
+        ...inProgressRecipes,
+        [isMeals ? 'meals' : 'drinks']: {
+          ...inProgressRecipes[isMeals ? 'meals' : 'drinks'],
+          [recipeId]: entriesRecipe,
+        },
+      });
+    }
+
+    navigate(`/${location}/${recipeId}/in-progress`);
+  };
+
+  const handleShareLink = () => {
+    navigator.clipboard.writeText(`${window.location.origin}${pathname}`).then(
+      () => {
+        setShareLink(true);
+      },
+      () => {
+        console.error('Erro ao copiar o link');
+      },
+    );
+  };
+
+  const recipe = data as any[];
+
+  const handleFavorite = () => {
+    const favoriteRecipe = {
+      id: recipe[0].idMeal || recipe[0].idDrink,
+      type: recipe[0].idMeal ? 'meal' : 'drink',
+      nationality: recipe[0].strArea || '',
+      category: recipe[0].strCategory || '',
+      alcoholicOrNot: recipe[0].strAlcoholic || '',
+      name: recipe[0].strMeal || recipe[0].strDrink,
+      image: recipe[0].strMealThumb || recipe[0].strDrinkThumb,
+    };
+
+    const favoritesRecipes = JSON.parse(valueFavorites) as FavoriteRecipe[];
+
+    if (!favoritesRecipes.find((element) => element.id === recipeId)) {
+      updateValueFavorites(JSON.stringify([...favoritesRecipes, favoriteRecipe]));
+    } else {
+      updateValueFavorites(JSON.stringify(favoritesRecipes
+        .filter((element) => element.id !== recipeId)));
+    }
+  };
 
   if (loading) {
     return <p>Loading...</p>;
@@ -45,6 +106,17 @@ function Recipe() {
 
   return (
     <main>
+      <IconButton onClick={ handleShareLink } data-testid="share-btn">
+        <ShareIcon />
+      </IconButton>
+      <button onClick={ handleFavorite }>
+        <img
+          src={ favorite ? isFavoriteIcon : favoriteIcon }
+          alt="Favorite Icon"
+          data-testid="favorite-btn"
+        />
+      </button>
+      {shareLink && <span>Link copied!</span>}
       <RecipeInfos location={ location } data={ data } entriesRecipe={ entriesRecipe } />
       {drinksRecipes.length > 1 ? (
         <Carousel drinks={ drinksRecipes.slice(0, 6) } />
@@ -56,6 +128,7 @@ function Recipe() {
         <Button
           variant="contained"
           data-testid="start-recipe-btn"
+          onClick={ handleClick }
           sx={ {
             position: 'fixed',
             bottom: 0,

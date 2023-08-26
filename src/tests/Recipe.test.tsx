@@ -1,5 +1,6 @@
 import { vi } from 'vitest';
 import { act, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import mockFetch from './helpers/mockFetch';
 import { renderWithRouter } from './helpers/renderWithRouter';
 
@@ -36,5 +37,22 @@ describe('Testando a página Recipe', () => {
     expect(mealVideo).toBeInTheDocument();
     expect(mealCarousel).toBeInTheDocument();
     expect(startRecipeBtn).toBeInTheDocument();
+  });
+
+  test('Testando se ao clicar no botão de favoritar, a receita é adicionada aos favoritos', async () => {
+    const mockStorage = vi.spyOn(Storage.prototype, 'setItem');
+
+    await act(async () => {
+      renderWithRouter(<App />, { initialEntries: ['/meals/52771'] });
+    });
+
+    const favoriteBtn = await screen.findByTestId('favorite-btn') as HTMLImageElement;
+    expect(favoriteBtn).toBeInTheDocument();
+    expect(favoriteBtn.src).toContain('whiteHeartIcon.svg');
+
+    await userEvent.click(favoriteBtn);
+
+    expect(mockStorage).toHaveBeenCalledTimes(1);
+    expect(favoriteBtn.src).toContain('blackHeartIcon.svg');
   });
 });

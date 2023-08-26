@@ -73,6 +73,7 @@ function RecipeInfos({ data, location, entriesRecipe }: RecipeInfosProps) {
             alt={ item.strDrink }
             data-testid="recipe-photo"
           />
+          <p>{item.strCategory}</p>
           <h2
             data-testid="recipe-category"
           >
