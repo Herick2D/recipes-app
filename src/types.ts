@@ -25,3 +25,24 @@ export type Drink = {
 };
 
 export type RadioType = 'ingredient' | 'name' | 'firstLetter';
+
+export type DoneRecipe = {
+  id: string,
+  type: 'meal' | 'drink',
+  nationality: string,
+  category: string,
+  alcoholicOrNot: string,
+  name: string,
+  image: string,
+  doneDate: number,
+  tags: string[] | [],
+};
+
+export type InProgressRecipes = {
+  meals: {
+    [key: string]: string,
+  }
+  drinks: {
+    [key: string]: string,
+  }
+};

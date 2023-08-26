@@ -8,7 +8,7 @@ type CarouselProps = {
 
 function Carousel({ drinks = [], meals = [] }: CarouselProps) {
   return (
-    <Stack spacing={ 4 } direction="row" overflow="auto" p={ 2 }>
+    <Stack spacing={ 4 } direction="row" overflow="auto" p={ 2 } mb={ 5 }>
       {drinks?.map((drink, index) => (
         <Box
           key={ Date.now() + index }

@@ -26,7 +26,6 @@ function RecipeInfos({ data, location, entriesRecipe }: RecipeInfosProps) {
           <div key={ item.idMeal }>
             <h1 data-testid="recipe-title">{ item.strMeal }</h1>
             <p data-testid="recipe-category">
-              {' '}
               { item.strCategory }
             </p>
             <img
