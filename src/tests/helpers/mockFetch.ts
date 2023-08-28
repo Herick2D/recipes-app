@@ -3,6 +3,8 @@ import { mealsMock } from './mealsMock';
 import { DrinksCategoryMock, MealsCategoryMock } from './categoriesMock';
 import oneDrink from './oneDrinkMock';
 import oneMeal from './oneMealMock';
+import beefMeals from './beefMealsMock';
+import cocktailDrinks from './cocktailDrinksMock';
 
 const mockFetch = (url: any) => Promise.resolve({
 
@@ -13,6 +15,8 @@ const mockFetch = (url: any) => Promise.resolve({
     if (url === 'https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=178319') { return Promise.resolve(oneDrink); }
     if (url === 'https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list') { return Promise.resolve(DrinksCategoryMock); }
     if (url === 'https://www.themealdb.com/api/json/v1/1/list.php?c=list') { return Promise.resolve(MealsCategoryMock); }
+    if (url === 'https://www.themealdb.com/api/json/v1/1/filter.php?c=Beef') { return Promise.resolve(beefMeals); }
+    if (url === 'https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=cocktail') { return Promise.resolve(cocktailDrinks); }
   },
 });
 

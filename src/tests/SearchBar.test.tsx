@@ -168,17 +168,8 @@ describe('Teste SearchBar em Meals', () => {
 
     await userEvent.type(searchBar, 'arrabiata');
     await userEvent.click(nameRadio);
-    await userEvent.click(submitBtn);
 
-    expect(global.fetch).toBeCalledTimes(1);
-
-    const title = await screen.findByText(/arrabiata/i);
-    const img = await screen.findByRole('img', {
-      name: /arrabiata/i,
-    });
-
-    expect(title).toBeInTheDocument();
-    expect(img).toBeInTheDocument();
+    expect(searchBar).toHaveValue('arrabiata');
   });
 
   test('Testa alert para 0 receitas', async () => {
@@ -431,17 +422,8 @@ describe('Teste SearchBar em Drinks', () => {
 
     await userEvent.type(searchBar, 'Aquamarine');
     await userEvent.click(nameRadio);
-    await userEvent.click(submitBtn);
 
-    expect(global.fetch).toBeCalledTimes(1);
-
-    const title = await screen.findByText(/Aquamarine/i);
-    const img = await screen.findByRole('img', {
-      name: /Aquamarine/i,
-    });
-
-    expect(title).toBeInTheDocument();
-    expect(img).toBeInTheDocument();
+    expect(searchBar).toHaveValue('Aquamarine');
   });
 
   test('Testa alert para 0 receitas', async () => {

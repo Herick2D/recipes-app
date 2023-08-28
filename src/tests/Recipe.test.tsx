@@ -15,9 +15,11 @@ describe('Testando a página Recipe', () => {
     global.fetch = vi.fn().mockImplementation(mockFetch as any);
   });
 
+  const MEAL_PAGE = '/meals/52771';
+
   test('Testando se a página contém as informações da receita', async () => {
     await act(async () => {
-      renderWithRouter(<App />, { initialEntries: ['/meals/52771'] });
+      renderWithRouter(<App />, { initialEntries: [MEAL_PAGE] });
     });
 
     expect(global.fetch).toHaveBeenCalledTimes(2);
@@ -43,7 +45,7 @@ describe('Testando a página Recipe', () => {
     const mockStorage = vi.spyOn(Storage.prototype, 'setItem');
 
     await act(async () => {
-      renderWithRouter(<App />, { initialEntries: ['/meals/52771'] });
+      renderWithRouter(<App />, { initialEntries: [MEAL_PAGE] });
     });
 
     const favoriteBtn = await screen.findByTestId('favorite-btn') as HTMLImageElement;
@@ -54,5 +56,22 @@ describe('Testando a página Recipe', () => {
 
     expect(mockStorage).toHaveBeenCalledTimes(1);
     expect(favoriteBtn.src).toContain('blackHeartIcon.svg');
+  });
+
+  test('Testando se ao clicar no botão de compartilhar, o link da receita é copiado', async () => {
+    await act(async () => {
+      renderWithRouter(<App />, { initialEntries: [MEAL_PAGE] });
+    });
+
+    const user = userEvent.setup();
+
+    const shareBtn = await screen.findByTestId('share-btn');
+    expect(shareBtn).toBeInTheDocument();
+
+    await user.click(shareBtn);
+
+    const link = await screen.findByText('Link copied!');
+
+    expect(link).toBeInTheDocument();
   });
 });

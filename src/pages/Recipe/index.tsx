@@ -64,15 +64,13 @@ function Recipe() {
     navigate(`/${location}/${recipeId}/in-progress`);
   };
 
-  const handleShareLink = () => {
-    navigator.clipboard.writeText(`${window.location.origin}${pathname}`).then(
-      () => {
-        setShareLink(true);
-      },
-      () => {
-        console.error('Erro ao copiar o link');
-      },
-    );
+  const handleShareLink = async () => {
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}${pathname}`);
+      setShareLink(true);
+    } catch (error) {
+      console.error('Erro ao copiar o link');
+    }
   };
 
   const recipe = data as any[];
