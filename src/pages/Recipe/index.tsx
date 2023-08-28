@@ -13,8 +13,6 @@ import useLocalStorage from '../../hooks/useLocalStorage';
 
 function Recipe() {
   const [entriesRecipe, setEntriesRecipe] = useState<[string, string][]>([]);
-  const [inProgressRecipes,
-    setInprogressRecipes] = useState<InProgressRecipes>({} as InProgressRecipes);
   const [doneRecipes, setDoneRecipes] = useState<DoneRecipe[]>([]);
   const [favorite, setFavorite] = useState(false);
   const [shareLink, setShareLink] = useState(false);
@@ -24,7 +22,8 @@ function Recipe() {
   const { value } = useLocalStorage('doneRecipes', JSON.stringify(doneRecipes));
   const {
     value: valueInProgress,
-  } = useLocalStorage('inProgressRecipes', JSON.stringify(inProgressRecipes));
+    updateValue: updateValueInProgress,
+  } = useLocalStorage('inProgressRecipes', JSON.stringify({} as InProgressRecipes[]));
   const {
     value: valueFavorites,
     updateValue: updateValueFavorites,
@@ -37,7 +36,8 @@ function Recipe() {
   const recipeId = pathname.split('/')[2];
   const location = pathname.split('/')[1];
 
-  const isInProgress = inProgressRecipes[isMeals ? 'meals' : 'drinks']?.[recipeId];
+  const isInProgress = JSON
+    .parse(valueInProgress)[isMeals ? 'meals' : 'drinks']?.[recipeId];
 
   useEffect(() => {
     if (data[0]) {
@@ -46,21 +46,19 @@ function Recipe() {
   }, [data]);
 
   useEffect(() => {
-    setDoneRecipes(JSON.parse(value));
-    setInprogressRecipes(JSON.parse(valueInProgress));
     setFavorite(JSON.parse(valueFavorites)
       .find((element: FavoriteRecipe) => element.id === recipeId));
-  }, [value, valueInProgress, valueFavorites]);
+  }, [valueFavorites, recipeId]);
 
   const handleClick = () => {
     if (!isInProgress) {
-      setInprogressRecipes({
-        ...inProgressRecipes,
+      updateValueInProgress(JSON.stringify({
+        ...JSON.parse(valueInProgress),
         [isMeals ? 'meals' : 'drinks']: {
-          ...inProgressRecipes[isMeals ? 'meals' : 'drinks'],
+          ...JSON.parse(valueInProgress)[isMeals ? 'meals' : 'drinks'],
           [recipeId]: entriesRecipe,
         },
-      });
+      }));
     }
 
     navigate(`/${location}/${recipeId}/in-progress`);

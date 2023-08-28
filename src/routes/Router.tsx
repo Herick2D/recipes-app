@@ -5,6 +5,7 @@ import Layout from '../components/Layout';
 import Drinks from '../pages/Drinks';
 import Profile from '../pages/Profile';
 import Recipe from '../pages/Recipe';
+import RecipeInProgress from '../pages/RecipeInProgress';
 
 function Router() {
   return (
@@ -19,8 +20,8 @@ function Router() {
       </Route>
       <Route path="/meals/:id" element={ <Recipe /> } />
       <Route path="/drinks/:id" element={ <Recipe /> } />
-      <Route path="/meals/:id/in-progress" element={ <h1>Not Found</h1> } />
-      <Route path="/drinks/:id/in-progress" element={ <h1>Not Found</h1> } />
+      <Route path="/meals/:id/in-progress" element={ <RecipeInProgress /> } />
+      <Route path="/drinks/:id/in-progress" element={ <RecipeInProgress /> } />
     </Routes>
   );
 }

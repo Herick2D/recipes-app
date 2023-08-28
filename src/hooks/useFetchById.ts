@@ -20,7 +20,7 @@ function useFetchById() {
     };
 
     getData();
-  }, [id]);
+  }, []);
 
   return { data, loading };
 }
