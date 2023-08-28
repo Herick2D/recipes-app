@@ -32,15 +32,15 @@ function RecipeCard() {
       .find((element: FavoriteRecipe) => element.id === recipeId));
   }, [valueFavorites, recipeId]);
 
-  const handleShareLink = () => {
-    navigator.clipboard.writeText(`${window.location.origin}${location.pathname}`).then(
-      () => {
-        setShareLink(true);
-      },
-      () => {
-        console.error('Erro ao copiar o link');
-      },
-    );
+  const handleShareLink = async () => {
+    try {
+      const path = location.pathname.split('/')[1];
+      await navigator.clipboard
+        .writeText(`${window.location.origin}/${path}/${recipeId}`);
+      setShareLink(true);
+    } catch (error) {
+      console.error('Erro ao copiar o link');
+    }
   };
 
   const handleFavorite = () => {
@@ -72,59 +72,83 @@ function RecipeCard() {
     } else {
       setIngredients([...ingredients, name]);
     }
+  };
 
+  useEffect(() => {
     const inProgressRecipes = JSON.parse(ingredientsValue) as InProgressRecipes;
 
-    if (location.pathname.includes('meals') && recipeId) {
+    if (location.pathname.includes('meals') && recipeId && ingredients.length > 0) {
       updateIngredientsValue(JSON.stringify({
         ...inProgressRecipes,
         meals: {
           ...inProgressRecipes.meals,
-          [recipeId]: [...ingredients, name],
+          [recipeId]: [...ingredients],
         },
       }));
     }
 
-    if (location.pathname.includes('drinks') && recipeId) {
+    if (location.pathname.includes('drinks') && recipeId && ingredients.length > 0) {
       updateIngredientsValue(JSON.stringify({
         ...inProgressRecipes,
         drinks: {
           ...inProgressRecipes.drinks,
-          [recipeId]: [...ingredients, name],
+          [recipeId]: [...ingredients],
         },
       }));
     }
-  };
+
+    if (location.pathname.includes('meals') && recipeId && ingredients.length === 0) {
+      updateIngredientsValue(JSON.stringify({
+        ...inProgressRecipes,
+        meals: {
+          ...inProgressRecipes.meals,
+          [recipeId]: [],
+        },
+      }));
+    }
+
+    if (location.pathname.includes('drinks') && recipeId && ingredients.length === 0) {
+      updateIngredientsValue(JSON.stringify({
+        ...inProgressRecipes,
+        drinks: {
+          ...inProgressRecipes.drinks,
+          [recipeId]: [],
+        },
+      }));
+    }
+  }, [ingredients]);
 
   useEffect(() => {
-  //   const inProgressRecipes = JSON.parse(ingredientsValue) as InProgressRecipes;
+    const ingredientsStorage = JSON.parse(ingredientsValue);
+    const isMeal = location.pathname.includes('meals');
 
-    //   if (location.pathname.includes('meals') && recipeId) {
-    //     setIngredients(inProgressRecipes.meals[recipeId] || ['']);
-    //   }
-
-    //   if (location.pathname.includes('drinks') && recipeId) {
-    //     setIngredients(inProgressRecipes.drinks[recipeId] || ['']);
-    //   }
-
-    console.log(ingredients);
-  }, [ingredients]);
+    if (recipeId && ingredientsStorage) {
+      if (isMeal && ingredientsStorage.meals && ingredientsStorage.meals[recipeId]) {
+        setIngredients(ingredientsStorage.meals[recipeId]);
+      }
+      if (!isMeal && ingredientsStorage.drinks && ingredientsStorage.drinks[recipeId]) {
+        setIngredients(ingredientsStorage.drinks[recipeId]);
+      }
+    }
+  }, []);
 
   if (loading) return (<div>Loading...</div>);
 
   return (
     <div>
-      <IconButton onClick={ handleShareLink } data-testid="share-btn">
-        <ShareIcon />
-      </IconButton>
-      <button onClick={ handleFavorite }>
-        <img
-          src={ favorite ? isFavoriteIcon : favoriteIcon }
-          alt="Favorite Icon"
-          data-testid="favorite-btn"
-        />
-      </button>
-      {shareLink && <span>Link copied!</span>}
+      <div>
+        <IconButton onClick={ handleShareLink } data-testid="share-btn">
+          <ShareIcon />
+        </IconButton>
+        <button onClick={ handleFavorite }>
+          <img
+            src={ favorite ? isFavoriteIcon : favoriteIcon }
+            alt="Favorite Icon"
+            data-testid="favorite-btn"
+          />
+        </button>
+        {shareLink && <span>Link copied!</span>}
+      </div>
       <img
         src={ recipe[0]?.strMealThumb || recipe[0]?.strDrinkThumb }
         alt={ recipe[0]?.strMeal || recipe[0]?.strDrink }
@@ -142,9 +166,11 @@ function RecipeCard() {
               <label
                 data-testid={ `${index}-ingredient-step` }
                 htmlFor={ `${index}-ingredient-step` }
-                key={ index + Date.now() }
+                key={ element }
                 style={ { textDecoration: ingredients.includes(element)
-                  ? 'line-through solid rgb(0, 0, 0)' : 'none' } }
+                  ? 'line-through solid rgb(0, 0, 0)' : 'none',
+                display: 'block',
+                } }
               >
                 <input
                   type="checkbox"
