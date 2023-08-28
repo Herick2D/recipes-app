@@ -105,3 +105,7 @@ export type FavoriteRecipe = {
   name: string,
   image: string,
 };
+
+export type Categories = {
+  strCategory: string;
+};
