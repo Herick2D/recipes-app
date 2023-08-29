@@ -10,6 +10,7 @@ import cocktailDrinks from './helpers/cocktailDrinksMock';
 import oneDrink from './helpers/oneDrinkMock';
 import drinksMock from './helpers/drinksMock';
 import { DrinksCategoryMock, MealsCategoryMock } from './helpers/categoriesMock';
+import mockFetch from './helpers/mockFetch';
 
 describe('Teste SearchBar em Meals', () => {
   beforeEach(() => {
@@ -512,5 +513,85 @@ describe('Teste SearchBar em Drinks', () => {
     const drink = screen.getByText(/Apello/i);
 
     expect(drink).toBeInTheDocument();
+  });
+});
+
+describe('Testando o SearchBar para 1 receita', () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  beforeEach(() => {
+    global.fetch = vi.fn().mockImplementation(mockFetch as any);
+  });
+
+  test('Testando se ao buscar Spicy Arrabiata Penne a pagina é redirecionada para a receita', async () => {
+    renderWithRouter(<App />, { initialEntries: ['/meals'] });
+
+    const searchBtn = screen.getByRole('button', {
+      name: /search icon/i,
+    });
+
+    userEvent.click(searchBtn);
+
+    const searchInput = await screen.findByRole('textbox');
+    const submitBtn = await screen.findByRole('button', {
+      name: 'Search',
+    });
+    const radioName = await screen.findByRole('radio', {
+      name: /name/i,
+    });
+
+    expect(searchInput).toBeInTheDocument();
+    expect(submitBtn).toBeInTheDocument();
+    expect(radioName).toBeInTheDocument();
+
+    await userEvent.type(searchInput, 'arrabiata');
+    await userEvent.click(radioName);
+
+    expect(searchInput).toHaveValue('arrabiata');
+    expect(radioName).toBeChecked();
+
+    await userEvent.click(submitBtn);
+
+    const recipeTitle = await screen.findByTestId('recipe-title');
+
+    expect(recipeTitle).toBeInTheDocument();
+    expect(recipeTitle).toHaveTextContent('Spicy Arrabiata Penne');
+  });
+
+  test('Testando se ao buscar Aquamarine a pagina é redirecionada para a receita', async () => {
+    renderWithRouter(<App />, { initialEntries: ['/drinks'] });
+
+    const searchBtn = screen.getByRole('button', {
+      name: /search icon/i,
+    });
+
+    userEvent.click(searchBtn);
+
+    const searchInput = await screen.findByRole('textbox');
+    const submitBtn = await screen.findByRole('button', {
+      name: 'Search',
+    });
+    const radioName = await screen.findByRole('radio', {
+      name: /name/i,
+    });
+
+    expect(searchInput).toBeInTheDocument();
+    expect(submitBtn).toBeInTheDocument();
+    expect(radioName).toBeInTheDocument();
+
+    await userEvent.type(searchInput, 'aquamarine');
+    await userEvent.click(radioName);
+
+    expect(searchInput).toHaveValue('aquamarine');
+    expect(radioName).toBeChecked();
+
+    await userEvent.click(submitBtn);
+
+    const recipeTitle = await screen.findByTestId('recipe-title');
+
+    expect(recipeTitle).toBeInTheDocument();
+    expect(recipeTitle).toHaveTextContent('Aquamarine');
   });
 });

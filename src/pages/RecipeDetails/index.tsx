@@ -13,17 +13,19 @@ import useLocalStorage from '../../hooks/useLocalStorage';
 
 function Recipe() {
   const [entriesRecipe, setEntriesRecipe] = useState<[string, string][]>([]);
-  const [doneRecipes, setDoneRecipes] = useState<DoneRecipe[]>([]);
+  const [doneRecipe, setDoneRecipe] = useState<DoneRecipe[]>([]);
   const [favorite, setFavorite] = useState(false);
   const [shareLink, setShareLink] = useState(false);
 
   const { data, loading } = useFetchById();
   const { drinksRecipes, mealsRecipes } = useFetchGeneric();
-  const { value } = useLocalStorage('doneRecipes', JSON.stringify(doneRecipes));
+  const {
+    value: doneRecipesValue,
+  } = useLocalStorage('doneRecipes', JSON.stringify([] as DoneRecipe[]));
   const {
     value: valueInProgress,
     updateValue: updateValueInProgress,
-  } = useLocalStorage('inProgressRecipes', JSON.stringify({} as InProgressRecipes[]));
+  } = useLocalStorage('inProgressRecipes', JSON.stringify({} as InProgressRecipes));
   const {
     value: valueFavorites,
     updateValue: updateValueFavorites,
@@ -44,6 +46,10 @@ function Recipe() {
       setEntriesRecipe(Object.entries(data[0]));
     }
   }, [data]);
+
+  useEffect(() => {
+    setDoneRecipe(JSON.parse(doneRecipesValue));
+  }, []);
 
   useEffect(() => {
     setFavorite(JSON.parse(valueFavorites)
@@ -119,8 +125,7 @@ function Recipe() {
       ) : (
         <Carousel meals={ mealsRecipes.slice(0, 6) } />
       )}
-      {!doneRecipes.find((element) => element.id
-      === drinksRecipes[0].idDrink || mealsRecipes[0].idMeal) && (
+      {!doneRecipe.find((element: DoneRecipe) => element.id === recipeId) && (
         <Button
           variant="contained"
           data-testid="start-recipe-btn"
