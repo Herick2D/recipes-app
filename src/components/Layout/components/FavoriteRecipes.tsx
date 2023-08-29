@@ -30,15 +30,19 @@ function FavoriteRecipes() {
                 : recipe.alcoholicOrNot }
             </p>
             <h2 data-testid={ `${index}-horizontal-name` }>{ recipe.name }</h2>
-            <button
-              data-testid={ `${index}-horizontal-share-btn` }
-            >
-              <img src={ shareImg } alt="share button" />
+            <button>
+              <img
+                data-testid={ `${index}-horizontal-share-btn` }
+                src={ shareImg }
+                alt="share button"
+              />
             </button>
-            <button
-              data-testid={ `${index}-horizontal-favorite-btn` }
-            >
-              <img src={ favoriteImg } alt="favorite button" />
+            <button>
+              <img
+                data-testid={ `${index}-horizontal-favorite-btn` }
+                src={ favoriteImg }
+                alt="favorite button"
+              />
             </button>
           </div>
         ))}
