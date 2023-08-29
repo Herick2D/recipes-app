@@ -1,9 +1,10 @@
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import ShareIcon from '@mui/icons-material/Share';
 import { Button, IconButton } from '@mui/material';
 import useFetchById from '../../../hooks/useFetchById';
-import { Drink, FavoriteRecipe, InProgressRecipes, Meal } from '../../../types';
+import { DoneRecipe, Drink,
+  FavoriteRecipe, InProgressRecipes, Meal } from '../../../types';
 import isFavoriteIcon from '../../../images/blackHeartIcon.svg';
 import favoriteIcon from '../../../images/whiteHeartIcon.svg';
 import useLocalStorage from '../../../hooks/useLocalStorage';
@@ -18,11 +19,16 @@ function RecipeCard() {
   } = useLocalStorage('inProgressRecipes', JSON.stringify({} as InProgressRecipes));
   const { data, loading } = useFetchById();
   const location = useLocation();
+  const navigate = useNavigate();
   const { id: recipeId } = useParams();
   const {
     value: valueFavorites,
     updateValue: updateValueFavorites,
   } = useLocalStorage('favoriteRecipes', JSON.stringify([] as FavoriteRecipe[]));
+  const {
+    value: valueDoneRecipes,
+    updateValue: updateValueDoneRecipes,
+  } = useLocalStorage('doneRecipes', JSON.stringify([] as DoneRecipe[]));
 
   const recipe: any = location.pathname.includes('meals')
     ? data as Meal[] : data as Drink[];
@@ -132,6 +138,43 @@ function RecipeCard() {
     }
   }, []);
 
+  const isRecipeDone = () => {
+    if (recipe[0]) {
+      const recipeIngredients = Object.entries(recipe[0])
+        .filter((element) => element[0].includes('strIngredient'))
+        .reduce((acc: any, curr: any) => {
+          if (curr[1] !== '' && curr[1] !== null) {
+            return [...acc, curr[1]];
+          }
+          return acc;
+        }, []);
+
+      return recipe[0] && ingredients.length === recipeIngredients.length;
+    }
+  };
+
+  const handleClick = () => {
+    navigate('/done-recipes');
+
+    const doneRecipe = {
+      id: recipe[0].idMeal || recipe[0].idDrink,
+      type: recipe[0].idMeal ? 'meal' : 'drink',
+      nationality: recipe[0].strArea || '',
+      name: recipe[0].strMeal || recipe[0].strDrink,
+      category: recipe[0].strCategory || '',
+      image: recipe[0].strMealThumb || recipe[0].strDrinkThumb,
+      alcoholicOrNot: recipe[0].strAlcoholic || '',
+      doneDate: new Date().toISOString(),
+      tags: recipe[0].strTags ? recipe[0].strTags.split(',') : [],
+    };
+
+    const doneRecipes = JSON.parse(valueDoneRecipes) as DoneRecipe[];
+
+    if (!doneRecipes.find((element) => element.id === recipeId)) {
+      updateValueDoneRecipes(JSON.stringify([...doneRecipes, doneRecipe]));
+    }
+  };
+
   if (loading) return (<div>Loading...</div>);
 
   return (
@@ -191,6 +234,8 @@ function RecipeCard() {
           position: 'fixed',
           bottom: 0,
         } }
+        onClick={ handleClick }
+        disabled={ !isRecipeDone() }
       >
         Finish Recipe
 
