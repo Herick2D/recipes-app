@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import { FavoriteRecipe } from '../../../types';
 import shareImg from '../../../images/shareIcon.svg';
@@ -11,6 +11,7 @@ function FavoriteRecipes() {
     updateValue,
   } = useLocalStorage<FavoriteRecipe[]>('favoriteRecipes', []);
   const [copied, setCopied] = useState(false);
+  const [filteredFavRecipes, setFilteredFavRecipes] = useState<FavoriteRecipe[]>([]);
 
   const handleFavorite = (id: string) => {
     const newFavoriteRecipes = favoriteRecipes.filter((recipe) => recipe.id !== id);
@@ -27,16 +28,49 @@ function FavoriteRecipes() {
     }
   };
 
+  const filterByAll = () => {
+    setFilteredFavRecipes(favoriteRecipes);
+  };
+
+  const filterByMeals = () => {
+    const filtered = favoriteRecipes.filter((recipe) => recipe.type === 'meal');
+    setFilteredFavRecipes(filtered);
+  };
+
+  const filterByDrinks = () => {
+    const filtered = favoriteRecipes.filter((recipe) => recipe.type === 'drink');
+    setFilteredFavRecipes(filtered);
+  };
+
+  useEffect(() => {
+    setFilteredFavRecipes(favoriteRecipes);
+  }, [favoriteRecipes]);
+
   return (
     <div className="card">
       <div>
         <h1>FavoriteRecipes</h1>
-        <button data-testid="filter-by-all-btn">All</button>
-        <button data-testid="filter-by-meal-btn">Meals</button>
-        <button data-testid="filter-by-drink-btn">Drinks</button>
+        <button
+          data-testid="filter-by-all-btn"
+          onClick={ filterByAll }
+        >
+          All
+        </button>
+        <button
+          data-testid="filter-by-meal-btn"
+          onClick={ filterByMeals }
+        >
+          Meals
+        </button>
+        <button
+          data-testid="filter-by-drink-btn"
+          onClick={ filterByDrinks }
+        >
+          Drinks
+        </button>
       </div>
       <div>
-        {favoriteRecipes.map((recipe, index) => (
+        {filteredFavRecipes.map((recipe, index) => (
           <div key={ recipe.id }>
             <img
               src={ recipe.image }
