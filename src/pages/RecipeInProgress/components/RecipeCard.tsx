@@ -13,7 +13,6 @@ function RecipeCard() {
   const [favorite, setFavorite] = useState(false);
   const [shareLink, setShareLink] = useState(false);
   const [ingredients, setIngredients] = useState<string[]>([]);
-
   const { value: ingredientsValue,
     updateValue: updateIngredientsValue,
   } = useLocalStorage('inProgressRecipes', JSON.stringify({} as InProgressRecipes));
@@ -33,6 +32,7 @@ function RecipeCard() {
   const recipe: any = location.pathname.includes('meals')
     ? data as Meal[] : data as Drink[];
 
+  const isMeals = location.pathname.includes('meals');
   useEffect(() => {
     setFavorite(JSON.parse(valueFavorites)
       .find((element: FavoriteRecipe) => element.id === recipeId));
@@ -170,8 +170,11 @@ function RecipeCard() {
 
     const doneRecipes = JSON.parse(valueDoneRecipes) as DoneRecipe[];
 
-    if (!doneRecipes.find((element) => element.id === recipeId)) {
+    if (!doneRecipes.find((element) => element.id === recipeId) && recipeId) {
       updateValueDoneRecipes(JSON.stringify([...doneRecipes, doneRecipe]));
+      const newInProgressRecipes = JSON.parse(ingredientsValue);
+      delete newInProgressRecipes[isMeals ? 'meals' : 'drinks'][recipeId];
+      updateIngredientsValue(JSON.stringify(newInProgressRecipes));
     }
   };
 
