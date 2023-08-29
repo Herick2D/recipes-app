@@ -164,4 +164,25 @@ describe('Testando a pagina Recipe em /drinks', () => {
 
     expect(ingredient).toBeInTheDocument();
   });
+
+  test('Testa se o nome do botão altera para Continue Recipe caso a receita já esteja em progresso', async () => {
+    await act(async () => {
+      global.Storage.prototype.setItem = vi.fn((key, value) => {
+        expect(key).toBe('inProgressRecipes');
+        expect(value).toBe(JSON.stringify({
+          drinks: {
+            178319: [],
+          },
+        }));
+      });
+
+      renderWithRouter(<App />, { initialEntries: [DRINK_URL] });
+    });
+
+    const startRecipeBtn = await screen.findByRole('button', {
+      name: /continue recipe/i,
+    });
+
+    expect(startRecipeBtn).toBeInTheDocument();
+  });
 });
