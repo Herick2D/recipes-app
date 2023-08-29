@@ -63,3 +63,30 @@ describe('Testa componente Recipes em Meals', () => {
     expect(corbaRecipe).toBeInTheDocument();
   });
 });
+
+describe('Testa componente Recipes em Drinks', () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  beforeEach(() => {
+    global.fetch = vi.fn().mockImplementation(mockFetch as any);
+  });
+
+  test('Verifica se ao clicar no botão cocktail, apenas os cocktails são exibidos', async () => {
+    renderWithRouter(<App />, { initialEntries: ['/drinks'] });
+
+    expect(global.fetch).toBeCalledTimes(2);
+
+    const cocktailBtn = await screen.findByTestId('Cocktail-category-filter');
+
+    await userEvent.click(cocktailBtn);
+
+    expect(global.fetch).toBeCalledTimes(3);
+
+    const cocktailRecipe = await screen.findByText(/155 Belmont/i);
+
+    screen.debug();
+    expect(cocktailRecipe).toBeInTheDocument();
+  });
+});

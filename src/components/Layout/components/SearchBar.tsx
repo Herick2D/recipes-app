@@ -36,7 +36,7 @@ function SearchBar({ pathname }: SearchBarProps) {
     || '';
 
     const data = await handleFetch(endpoint);
-    const finalData = data.drinks || data.meals;
+    const finalData = data?.drinks || data?.meals;
 
     if (finalData === null || finalData === undefined) {
       window.alert("Sorry, we haven't found any recipes for these filters.");
