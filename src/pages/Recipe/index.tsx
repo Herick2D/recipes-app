@@ -19,15 +19,15 @@ function Recipe() {
 
   const { data, loading } = useFetchById();
   const { drinksRecipes, mealsRecipes } = useFetchGeneric();
-  const { value } = useLocalStorage('doneRecipes', JSON.stringify(doneRecipes));
+  const { value } = useLocalStorage('doneRecipes', doneRecipes);
   const {
     value: valueInProgress,
     updateValue: updateValueInProgress,
-  } = useLocalStorage('inProgressRecipes', JSON.stringify({} as InProgressRecipes[]));
+  } = useLocalStorage('inProgressRecipes', {} as InProgressRecipes);
   const {
     value: valueFavorites,
     updateValue: updateValueFavorites,
-  } = useLocalStorage('favoriteRecipes', JSON.stringify([] as FavoriteRecipe[]));
+  } = useLocalStorage('favoriteRecipes', [] as FavoriteRecipe[]);
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -36,8 +36,7 @@ function Recipe() {
   const recipeId = pathname.split('/')[2];
   const location = pathname.split('/')[1];
 
-  const isInProgress = JSON
-    .parse(valueInProgress)[isMeals ? 'meals' : 'drinks']?.[recipeId];
+  const isInProgress = valueInProgress[isMeals ? 'meals' : 'drinks']?.[recipeId];
 
   useEffect(() => {
     if (data[0]) {
@@ -46,19 +45,19 @@ function Recipe() {
   }, [data]);
 
   useEffect(() => {
-    setFavorite(JSON.parse(valueFavorites)
-      .find((element: FavoriteRecipe) => element.id === recipeId));
+    setFavorite(valueFavorites
+      .some((element: FavoriteRecipe) => element.id === recipeId));
   }, [valueFavorites, recipeId]);
 
   const handleClick = () => {
     if (!isInProgress) {
-      updateValueInProgress(JSON.stringify({
-        ...JSON.parse(valueInProgress),
+      updateValueInProgress({
+        ...valueInProgress,
         [isMeals ? 'meals' : 'drinks']: {
-          ...JSON.parse(valueInProgress)[isMeals ? 'meals' : 'drinks'],
+          ...valueInProgress[isMeals ? 'meals' : 'drinks'],
           [recipeId]: entriesRecipe,
         },
-      }));
+      });
     }
 
     navigate(`/${location}/${recipeId}/in-progress`);
@@ -86,13 +85,13 @@ function Recipe() {
       image: recipe[0].strMealThumb || recipe[0].strDrinkThumb,
     };
 
-    const favoritesRecipes = JSON.parse(valueFavorites) as FavoriteRecipe[];
+    const favoritesRecipes = valueFavorites;
 
     if (!favoritesRecipes.find((element) => element.id === recipeId)) {
-      updateValueFavorites(JSON.stringify([...favoritesRecipes, favoriteRecipe]));
+      updateValueFavorites([...favoritesRecipes, favoriteRecipe as FavoriteRecipe]);
     } else {
-      updateValueFavorites(JSON.stringify(favoritesRecipes
-        .filter((element) => element.id !== recipeId)));
+      updateValueFavorites(favoritesRecipes
+        .filter((element) => element.id !== recipeId));
     }
   };
 

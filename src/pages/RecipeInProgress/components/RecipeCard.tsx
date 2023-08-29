@@ -15,21 +15,21 @@ function RecipeCard() {
 
   const { value: ingredientsValue,
     updateValue: updateIngredientsValue,
-  } = useLocalStorage('inProgressRecipes', JSON.stringify({} as InProgressRecipes));
+  } = useLocalStorage('inProgressRecipes', {} as InProgressRecipes);
   const { data, loading } = useFetchById();
   const location = useLocation();
   const { id: recipeId } = useParams();
   const {
     value: valueFavorites,
     updateValue: updateValueFavorites,
-  } = useLocalStorage('favoriteRecipes', JSON.stringify([] as FavoriteRecipe[]));
+  } = useLocalStorage('favoriteRecipes', [] as FavoriteRecipe[]);
 
   const recipe: any = location.pathname.includes('meals')
     ? data as Meal[] : data as Drink[];
 
   useEffect(() => {
-    setFavorite(JSON.parse(valueFavorites)
-      .find((element: FavoriteRecipe) => element.id === recipeId));
+    setFavorite(valueFavorites
+      .some((element: FavoriteRecipe) => element.id === recipeId));
   }, [valueFavorites, recipeId]);
 
   const handleShareLink = () => {
@@ -54,13 +54,13 @@ function RecipeCard() {
       image: recipe[0].strMealThumb || recipe[0].strDrinkThumb,
     };
 
-    const favoritesRecipes = JSON.parse(valueFavorites) as FavoriteRecipe[];
+    const favoritesRecipes = valueFavorites as FavoriteRecipe[];
 
     if (!favoritesRecipes.find((element) => element.id === recipeId)) {
-      updateValueFavorites(JSON.stringify([...favoritesRecipes, favoriteRecipe]));
+      updateValueFavorites([...favoritesRecipes, favoriteRecipe as FavoriteRecipe]);
     } else {
-      updateValueFavorites(JSON.stringify(favoritesRecipes
-        .filter((element) => element.id !== recipeId)));
+      updateValueFavorites(favoritesRecipes
+        .filter((element) => element.id !== recipeId));
     }
   };
 
@@ -73,26 +73,26 @@ function RecipeCard() {
       setIngredients([...ingredients, name]);
     }
 
-    const inProgressRecipes = JSON.parse(ingredientsValue) as InProgressRecipes;
+    const inProgressRecipes = ingredientsValue as InProgressRecipes;
 
     if (location.pathname.includes('meals') && recipeId) {
-      updateIngredientsValue(JSON.stringify({
+      updateIngredientsValue({
         ...inProgressRecipes,
         meals: {
           ...inProgressRecipes.meals,
           [recipeId]: [...ingredients, name],
         },
-      }));
+      });
     }
 
     if (location.pathname.includes('drinks') && recipeId) {
-      updateIngredientsValue(JSON.stringify({
+      updateIngredientsValue({
         ...inProgressRecipes,
         drinks: {
           ...inProgressRecipes.drinks,
           [recipeId]: [...ingredients, name],
         },
-      }));
+      });
     }
   };
 
