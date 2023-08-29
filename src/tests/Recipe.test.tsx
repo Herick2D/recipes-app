@@ -159,7 +159,7 @@ describe('Testando a pagina Recipe em /drinks', () => {
     await userEvent.click(startRecipeBtn);
 
     const ingredient = await screen.findByRole('checkbox', {
-      name: /blue curacao/i,
+      name: /hpnotiq/i,
     });
 
     expect(ingredient).toBeInTheDocument();
