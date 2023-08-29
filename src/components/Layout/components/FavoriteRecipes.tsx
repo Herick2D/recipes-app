@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import { FavoriteRecipe } from '../../../types';
 import shareImg from '../../../images/shareIcon.svg';
@@ -7,6 +8,17 @@ function FavoriteRecipes() {
   const {
     value: favoriteRecipes,
   } = useLocalStorage<FavoriteRecipe[]>('favoriteRecipes', []);
+  const [copied, setCopied] = useState(false);
+
+  const handleClipBoard = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}/${url}`);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    } catch (error) {
+      console.error('Erro ao copiar o link');
+    }
+  };
 
   return (
     <>
@@ -30,7 +42,8 @@ function FavoriteRecipes() {
                 : recipe.alcoholicOrNot }
             </p>
             <h2 data-testid={ `${index}-horizontal-name` }>{ recipe.name }</h2>
-            <button>
+            { copied && <span>Link copied!</span> }
+            <button onClick={ () => handleClipBoard(`${recipe.type}s/${recipe.id}`) }>
               <img
                 data-testid={ `${index}-horizontal-share-btn` }
                 src={ shareImg }
