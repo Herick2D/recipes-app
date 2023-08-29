@@ -3,12 +3,19 @@ import useLocalStorage from '../../../hooks/useLocalStorage';
 import { FavoriteRecipe } from '../../../types';
 import shareImg from '../../../images/shareIcon.svg';
 import favoriteImg from '../../../images/blackHeartIcon.svg';
+import './styles/FavoriteRecipes.css';
 
 function FavoriteRecipes() {
   const {
     value: favoriteRecipes,
+    updateValue,
   } = useLocalStorage<FavoriteRecipe[]>('favoriteRecipes', []);
   const [copied, setCopied] = useState(false);
+
+  const handleFavorite = (id: string) => {
+    const newFavoriteRecipes = favoriteRecipes.filter((recipe) => recipe.id !== id);
+    updateValue(newFavoriteRecipes);
+  };
 
   const handleClipBoard = async (url: string) => {
     try {
@@ -21,7 +28,7 @@ function FavoriteRecipes() {
   };
 
   return (
-    <>
+    <div className="card">
       <div>
         <h1>FavoriteRecipes</h1>
         <button data-testid="filter-by-all-btn">All</button>
@@ -50,7 +57,7 @@ function FavoriteRecipes() {
                 alt="share button"
               />
             </button>
-            <button>
+            <button onClick={ () => handleFavorite(recipe.id) }>
               <img
                 data-testid={ `${index}-horizontal-favorite-btn` }
                 src={ favoriteImg }
@@ -60,7 +67,7 @@ function FavoriteRecipes() {
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 }
 
