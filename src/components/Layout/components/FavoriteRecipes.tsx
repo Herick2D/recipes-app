@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import { FavoriteRecipe } from '../../../types';
@@ -72,17 +73,23 @@ function FavoriteRecipes() {
       <div>
         {filteredFavRecipes.map((recipe, index) => (
           <div key={ recipe.id }>
-            <img
-              src={ recipe.image }
-              alt={ recipe.name }
-              data-testid={ `${index}-horizontal-image` }
-            />
+            <Link to={ `/${recipe.type}s/${recipe.id}` }>
+              <img
+                src={ recipe.image }
+                alt={ recipe.name }
+                data-testid={ `${index}-horizontal-image` }
+                height={ 100 }
+                width={ 100 }
+              />
+            </Link>
             <p data-testid={ `${index}-horizontal-top-text` }>
               { recipe.type === 'meal'
                 ? `${recipe.nationality} - ${recipe.category}`
                 : recipe.alcoholicOrNot }
             </p>
-            <h2 data-testid={ `${index}-horizontal-name` }>{ recipe.name }</h2>
+            <Link to={ `/${recipe.type}s/${recipe.id}` }>
+              <h2 data-testid={ `${index}-horizontal-name` }>{ recipe.name }</h2>
+            </Link>
             { copied && <span>Link copied!</span> }
             <button onClick={ () => handleClipBoard(`${recipe.type}s/${recipe.id}`) }>
               <img
