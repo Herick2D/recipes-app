@@ -57,16 +57,6 @@ function Recipe() {
   }, [valueFavorites, recipeId]);
 
   const handleClick = () => {
-    if (!isInProgress) {
-      updateValueInProgress(JSON.stringify({
-        ...JSON.parse(valueInProgress),
-        [isMeals ? 'meals' : 'drinks']: {
-          ...JSON.parse(valueInProgress)[isMeals ? 'meals' : 'drinks'],
-          [recipeId]: entriesRecipe,
-        },
-      }));
-    }
-
     navigate(`/${location}/${recipeId}/in-progress`);
   };
 

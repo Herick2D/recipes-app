@@ -89,10 +89,10 @@ export type DoneRecipe = {
 
 export type InProgressRecipes = {
   meals: {
-    [id: string]: string,
+    [key: string]: string[],
   }
   drinks: {
-    [id: string]: string,
+    [key: string]: string[],
   }
 };
 
