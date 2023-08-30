@@ -4,9 +4,8 @@ import Meals from '../pages/Meals';
 import Layout from '../components/Layout';
 import Drinks from '../pages/Drinks';
 import Profile from '../pages/Profile';
-import Recipe from '../pages/Recipe';
 import RecipeInProgress from '../pages/RecipeInProgress';
-import FavoriteRecipes from '../components/Layout/components/FavoriteRecipes';
+import Recipe from '../pages/RecipeDetails';
 
 function Router() {
   return (
@@ -17,7 +16,7 @@ function Router() {
         <Route path="/drinks" element={ <Drinks /> } />
         <Route path="/profile" element={ <Profile /> } />
         <Route path="/done-recipes" element={ <h1>Not Found</h1> } />
-        <Route path="/favorite-recipes" element={ <FavoriteRecipes /> } />
+        <Route path="/favorite-recipes" element={ <h1>Not Found</h1> } />
       </Route>
       <Route path="/meals/:id" element={ <Recipe /> } />
       <Route path="/drinks/:id" element={ <Recipe /> } />

@@ -13,21 +13,23 @@ import useLocalStorage from '../../hooks/useLocalStorage';
 
 function Recipe() {
   const [entriesRecipe, setEntriesRecipe] = useState<[string, string][]>([]);
-  const [doneRecipes, setDoneRecipes] = useState<DoneRecipe[]>([]);
+  const [doneRecipe, setDoneRecipe] = useState<DoneRecipe[]>([]);
   const [favorite, setFavorite] = useState(false);
   const [shareLink, setShareLink] = useState(false);
 
   const { data, loading } = useFetchById();
   const { drinksRecipes, mealsRecipes } = useFetchGeneric();
-  const { value } = useLocalStorage('doneRecipes', doneRecipes);
+  const {
+    value: doneRecipesValue,
+  } = useLocalStorage('doneRecipes', JSON.stringify([] as DoneRecipe[]));
   const {
     value: valueInProgress,
     updateValue: updateValueInProgress,
-  } = useLocalStorage('inProgressRecipes', {} as InProgressRecipes);
+  } = useLocalStorage('inProgressRecipes', JSON.stringify({} as InProgressRecipes));
   const {
     value: valueFavorites,
     updateValue: updateValueFavorites,
-  } = useLocalStorage('favoriteRecipes', [] as FavoriteRecipe[]);
+  } = useLocalStorage('favoriteRecipes', JSON.stringify([] as FavoriteRecipe[]));
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -36,7 +38,8 @@ function Recipe() {
   const recipeId = pathname.split('/')[2];
   const location = pathname.split('/')[1];
 
-  const isInProgress = valueInProgress[isMeals ? 'meals' : 'drinks']?.[recipeId];
+  const isInProgress = JSON
+    .parse(valueInProgress)[isMeals ? 'meals' : 'drinks']?.[recipeId];
 
   useEffect(() => {
     if (data[0]) {
@@ -45,19 +48,23 @@ function Recipe() {
   }, [data]);
 
   useEffect(() => {
-    setFavorite(valueFavorites
-      .some((element: FavoriteRecipe) => element.id === recipeId));
+    setDoneRecipe(JSON.parse(doneRecipesValue));
+  }, []);
+
+  useEffect(() => {
+    setFavorite(JSON.parse(valueFavorites)
+      .find((element: FavoriteRecipe) => element.id === recipeId));
   }, [valueFavorites, recipeId]);
 
   const handleClick = () => {
     if (!isInProgress) {
-      updateValueInProgress({
-        ...valueInProgress,
+      updateValueInProgress(JSON.stringify({
+        ...JSON.parse(valueInProgress),
         [isMeals ? 'meals' : 'drinks']: {
-          ...valueInProgress[isMeals ? 'meals' : 'drinks'],
+          ...JSON.parse(valueInProgress)[isMeals ? 'meals' : 'drinks'],
           [recipeId]: entriesRecipe,
         },
-      });
+      }));
     }
 
     navigate(`/${location}/${recipeId}/in-progress`);
@@ -85,13 +92,13 @@ function Recipe() {
       image: recipe[0].strMealThumb || recipe[0].strDrinkThumb,
     };
 
-    const favoritesRecipes = valueFavorites;
+    const favoritesRecipes = JSON.parse(valueFavorites) as FavoriteRecipe[];
 
     if (!favoritesRecipes.find((element) => element.id === recipeId)) {
-      updateValueFavorites([...favoritesRecipes, favoriteRecipe as FavoriteRecipe]);
+      updateValueFavorites(JSON.stringify([...favoritesRecipes, favoriteRecipe]));
     } else {
-      updateValueFavorites(favoritesRecipes
-        .filter((element) => element.id !== recipeId));
+      updateValueFavorites(JSON.stringify(favoritesRecipes
+        .filter((element) => element.id !== recipeId)));
     }
   };
 
@@ -118,8 +125,7 @@ function Recipe() {
       ) : (
         <Carousel meals={ mealsRecipes.slice(0, 6) } />
       )}
-      {!doneRecipes.find((element) => element.id
-      === drinksRecipes[0].idDrink || mealsRecipes[0].idMeal) && (
+      {!doneRecipe.find((element: DoneRecipe) => element.id === recipeId) && (
         <Button
           variant="contained"
           data-testid="start-recipe-btn"

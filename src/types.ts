@@ -83,7 +83,7 @@ export type DoneRecipe = {
   alcoholicOrNot: string,
   name: string,
   image: string,
-  doneDate: number,
+  doneDate: string,
   tags: string[] | [],
 };
 

@@ -16,8 +16,10 @@ function CategoriesButtons({ pathname }: { pathname: string }) {
     if (buttonName !== category && category !== 'All') {
       setButtonName(category);
       const data = await fetchRecipesByCategory(pathname, category);
-      setCategoryRecipes(data.drinks || data.meals);
-      setRecipes(data.drinks || data.meals);
+      if (data) {
+        setCategoryRecipes(data.drinks || data.meals);
+        setRecipes(data.drinks || data.meals);
+      }
     }
 
     if (category === 'All' || buttonName === category) {
