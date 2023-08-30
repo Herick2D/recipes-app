@@ -20,13 +20,9 @@ function FavoriteRecipes() {
   };
 
   const handleClipBoard = async (url: string) => {
-    try {
-      await navigator.clipboard.writeText(`${window.location.origin}/${url}`);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 3000);
-    } catch (error) {
-      console.error('Erro ao copiar o link');
-    }
+    await navigator.clipboard.writeText(`${window.location.origin}/${url}`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 3000);
   };
 
   const filterByAll = () => {
@@ -73,7 +69,10 @@ function FavoriteRecipes() {
       <div>
         {filteredFavRecipes.map((recipe, index) => (
           <div key={ recipe.id }>
-            <Link to={ `/${recipe.type}s/${recipe.id}` }>
+            <Link
+              to={ `/${recipe.type}s/${recipe.id}` }
+              data-testid="link-img"
+            >
               <img
                 src={ recipe.image }
                 alt={ recipe.name }
