@@ -42,12 +42,20 @@ function CategoriesButtons({ pathname }: { pathname: string }) {
           {category.strCategory}
         </button>
       ))}
-      <button
-        onClick={ () => handleClick('All') }
-        data-testid="All-category-filter"
-      >
-        All
-      </button>
+      {pathname.split('/')[1] === 'meals' && (
+        <button
+          onClick={ () => handleClick('All') }
+          data-testid="All-category-filter"
+        >
+          All
+        </button>)}
+      {pathname.split('/')[1] === 'drinks' && (
+        <button
+          onClick={ () => handleClick('All') }
+          data-testid="All-category-filter"
+        >
+          All
+        </button>)}
     </div>
   );
 }

@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
-import FavoriteRecipes from '../components/Layout/components/FavoriteRecipes';
 import { renderWithRouter } from './helpers/renderWithRouter';
+import FavoriteRecipes from '../pages/FavoriteRecipes';
 
 describe('', () => {
   localStorage.setItem('favoriteRecipes', JSON.stringify([

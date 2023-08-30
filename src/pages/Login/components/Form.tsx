@@ -11,7 +11,7 @@ const INITIAL_STATE = {
 
 function Form() {
   const [login, setLogin] = useState(INITIAL_STATE as LoginFormType);
-  const { updateValue } = useLocalStorage('user', { email: login.email });
+  const { updateValue } = useLocalStorage('user', JSON.stringify({ email: login.email }));
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,7 +26,7 @@ function Form() {
     e.preventDefault();
     navigate('/meals');
     const newObject = { email: login.email };
-    updateValue(newObject);
+    updateValue(JSON.stringify(newObject));
   };
 
   const isDisabled = () => {

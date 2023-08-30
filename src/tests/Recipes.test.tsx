@@ -79,6 +79,18 @@ describe('Testa componente Recipes em Drinks', () => {
     expect(global.fetch).toBeCalledTimes(2);
 
     const cocktailBtn = await screen.findByTestId('Cocktail-category-filter');
+    const ordinaryBtn = await screen.findByTestId('Ordinary Drink-category-filter');
+    const milkBtn = await screen.findByTestId('Shake-category-filter');
+    const allBtn = await screen.findByRole('button', { name: /All/i });
+    const cocoaBtn = await screen.findByTestId('Cocoa-category-filter');
+    const unknownBtn = await screen.findByTestId('Other / Unknown-category-filter');
+
+    expect(cocktailBtn).toBeInTheDocument();
+    expect(ordinaryBtn).toBeInTheDocument();
+    expect(milkBtn).toBeInTheDocument();
+    expect(allBtn).toBeInTheDocument();
+    expect(cocoaBtn).toBeInTheDocument();
+    expect(unknownBtn).toBeInTheDocument();
 
     await userEvent.click(cocktailBtn);
 
@@ -88,5 +100,28 @@ describe('Testa componente Recipes em Drinks', () => {
 
     screen.debug();
     expect(cocktailRecipe).toBeInTheDocument();
+  });
+
+  test('Testa se ao clicar em All todas as receitas são exibidas', async () => {
+    renderWithRouter(<App />, { initialEntries: ['/drinks'] });
+
+    expect(global.fetch).toBeCalledTimes(2);
+
+    const cocktailBtn = await screen.findByTestId('Cocktail-category-filter');
+    const allBtn = await screen.findByRole('button', { name: /All/i });
+
+    await userEvent.click(cocktailBtn);
+
+    expect(global.fetch).toBeCalledTimes(3);
+
+    const cocktailRecipe = await screen.findByText(/155 Belmont/i);
+
+    expect(cocktailRecipe).toBeInTheDocument();
+
+    await userEvent.click(allBtn);
+
+    const ggDrink = screen.getByText(/a piece of ass/i);
+
+    expect(ggDrink).toBeInTheDocument();
   });
 });

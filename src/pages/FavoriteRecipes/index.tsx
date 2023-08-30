@@ -1,22 +1,25 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import useLocalStorage from '../../../hooks/useLocalStorage';
-import { FavoriteRecipe } from '../../../types';
-import shareImg from '../../../images/shareIcon.svg';
-import favoriteImg from '../../../images/blackHeartIcon.svg';
-import './styles/FavoriteRecipes.css';
+import shareImg from '../../images/shareIcon.svg';
+import favoriteImg from '../../images/blackHeartIcon.svg';
+import './FavoriteRecipes.css';
+import useLocalStorage from '../../hooks/useLocalStorage';
+import { FavoriteRecipe } from '../../types';
 
 function FavoriteRecipes() {
   const {
-    value: favoriteRecipes,
+    value,
     updateValue,
-  } = useLocalStorage<FavoriteRecipe[]>('favoriteRecipes', []);
+  } = useLocalStorage('favoriteRecipes', JSON.stringify([] as FavoriteRecipe[]));
   const [copied, setCopied] = useState(false);
   const [filteredFavRecipes, setFilteredFavRecipes] = useState<FavoriteRecipe[]>([]);
 
+  const favoriteRecipes = JSON.parse(value);
+
   const handleFavorite = (id: string) => {
-    const newFavoriteRecipes = favoriteRecipes.filter((recipe) => recipe.id !== id);
-    updateValue(newFavoriteRecipes);
+    const newFavoriteRecipes = favoriteRecipes
+      .filter((recipe: FavoriteRecipe) => recipe.id !== id);
+    updateValue(JSON.stringify(newFavoriteRecipes));
   };
 
   const handleClipBoard = async (url: string) => {
@@ -30,23 +33,24 @@ function FavoriteRecipes() {
   };
 
   const filterByMeals = () => {
-    const filtered = favoriteRecipes.filter((recipe) => recipe.type === 'meal');
+    const filtered = favoriteRecipes
+      .filter((recipe: FavoriteRecipe) => recipe.type === 'meal');
     setFilteredFavRecipes(filtered);
   };
 
   const filterByDrinks = () => {
-    const filtered = favoriteRecipes.filter((recipe) => recipe.type === 'drink');
+    const filtered = favoriteRecipes
+      .filter((recipe: FavoriteRecipe) => recipe.type === 'drink');
     setFilteredFavRecipes(filtered);
   };
 
   useEffect(() => {
     setFilteredFavRecipes(favoriteRecipes);
-  }, [favoriteRecipes]);
+  }, [value]);
 
   return (
     <div className="card">
       <div>
-        <h1>FavoriteRecipes</h1>
         <button
           data-testid="filter-by-all-btn"
           onClick={ filterByAll }
