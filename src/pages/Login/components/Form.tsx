@@ -11,7 +11,7 @@ const INITIAL_STATE = {
 
 function Form() {
   const [login, setLogin] = useState(INITIAL_STATE as LoginFormType);
-  const { updateValue } = useLocalStorage('user', JSON.stringify(login));
+  const { updateValue } = useLocalStorage('user', JSON.stringify({ email: login.email }));
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

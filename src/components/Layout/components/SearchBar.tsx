@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { RecipiesContexts } from '../../../contexts/recipiesContexts';
+import { RecipesContexts } from '../../../contexts/recipesContexts';
 import helperEndpoint from '../../../services/helperEndpoint';
 import { RadioType } from '../../../types';
 
@@ -11,7 +11,7 @@ type SearchBarProps = {
 function SearchBar({ pathname }: SearchBarProps) {
   const [searchType, setSearchType] = useState<RadioType>('ingredient');
   const [searchQuery, setSearchQuery] = useState('');
-  const { setRecipies, setIsLoading } = useContext(RecipiesContexts);
+  const { setRecipes, setIsLoading } = useContext(RecipesContexts);
   const navigate = useNavigate();
 
   const handleSearchTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,7 +36,7 @@ function SearchBar({ pathname }: SearchBarProps) {
     || '';
 
     const data = await handleFetch(endpoint);
-    const finalData = data.drinks || data.meals;
+    const finalData = data?.drinks || data?.meals;
 
     if (finalData === null || finalData === undefined) {
       window.alert("Sorry, we haven't found any recipes for these filters.");
@@ -45,7 +45,7 @@ function SearchBar({ pathname }: SearchBarProps) {
     }
 
     setIsLoading(false);
-    setRecipies(finalData);
+    setRecipes(finalData);
 
     if (finalData.length === 1) {
       const { idDrink, idMeal } = finalData[0];

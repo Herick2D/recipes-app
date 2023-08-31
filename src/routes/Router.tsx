@@ -4,8 +4,9 @@ import Meals from '../pages/Meals';
 import Layout from '../components/Layout';
 import Drinks from '../pages/Drinks';
 import Profile from '../pages/Profile';
-import MealId from '../pages/MealId';
-import DrinkId from '../pages/DrinkId';
+import RecipeInProgress from '../pages/RecipeInProgress';
+import Recipe from '../pages/RecipeDetails';
+import FavoriteRecipes from '../pages/FavoriteRecipes';
 
 function Router() {
   return (
@@ -16,12 +17,12 @@ function Router() {
         <Route path="/drinks" element={ <Drinks /> } />
         <Route path="/profile" element={ <Profile /> } />
         <Route path="/done-recipes" element={ <h1>Not Found</h1> } />
-        <Route path="/favorite-recipes" element={ <h1>Not Found</h1> } />
+        <Route path="/favorite-recipes" element={ <FavoriteRecipes /> } />
       </Route>
-      <Route path="/meals/:id" element={ <MealId /> } />
-      <Route path="/drinks/:id" element={ <DrinkId /> } />
-      <Route path="/meals/:id/in-progress" element={ <h1>Not Found</h1> } />
-      <Route path="/drinks/:id/in-progress" element={ <h1>Not Found</h1> } />
+      <Route path="/meals/:id" element={ <Recipe /> } />
+      <Route path="/drinks/:id" element={ <Recipe /> } />
+      <Route path="/meals/:id/in-progress" element={ <RecipeInProgress /> } />
+      <Route path="/drinks/:id/in-progress" element={ <RecipeInProgress /> } />
     </Routes>
   );
 }
