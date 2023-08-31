@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { doneRecipes } from './helpers/doneRecipesMock';
 import App from '../App';
 import { renderWithRouter } from './helpers/renderWithRouter';
+import mockFetch from './helpers/mockFetch';
 
 describe('Testando a página Done Recipes', () => {
   beforeAll(() => {
@@ -92,6 +93,8 @@ describe('Testando a página Done Recipes', () => {
   });
 
   test('Testa se ao clicar na receita é redirecionado para a página de detalhes da receita', async () => {
+    global.fetch = vi.fn().mockImplementation(mockFetch as any);
+
     renderWithRouter(<App />, { initialEntries: PATH });
 
     const firstRecipe = screen.getByTestId(RECIPE_TEST_ID_0);
