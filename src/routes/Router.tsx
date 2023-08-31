@@ -7,6 +7,7 @@ import Profile from '../pages/Profile';
 import RecipeInProgress from '../pages/RecipeInProgress';
 import Recipe from '../pages/RecipeDetails';
 import FavoriteRecipes from '../pages/FavoriteRecipes';
+import NotFound from '../pages/NotFound';
 
 function Router() {
   return (
@@ -23,6 +24,7 @@ function Router() {
       <Route path="/drinks/:id" element={ <Recipe /> } />
       <Route path="/meals/:id/in-progress" element={ <RecipeInProgress /> } />
       <Route path="/drinks/:id/in-progress" element={ <RecipeInProgress /> } />
+      <Route path="*" element={ <NotFound /> } />
     </Routes>
   );
 }

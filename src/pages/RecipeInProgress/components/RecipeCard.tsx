@@ -1,249 +1,193 @@
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import ShareIcon from '@mui/icons-material/Share';
-import { Button, IconButton } from '@mui/material';
-import useFetchById from '../../../hooks/useFetchById';
-import { DoneRecipe, Drink,
-  FavoriteRecipe, InProgressRecipes, Meal } from '../../../types';
-import isFavoriteIcon from '../../../images/blackHeartIcon.svg';
-import favoriteIcon from '../../../images/whiteHeartIcon.svg';
-import useLocalStorage from '../../../hooks/useLocalStorage';
+import { Box, Button, Checkbox,
+  FormControlLabel, IconButton, List, ListItem, Paper, Typography } from '@mui/material';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
-function RecipeCard() {
-  const [favorite, setFavorite] = useState(false);
-  const [shareLink, setShareLink] = useState(false);
-  const [ingredients, setIngredients] = useState<string[]>([]);
-  const { value: ingredientsValue,
-    updateValue: updateIngredientsValue,
-  } = useLocalStorage('inProgressRecipes', JSON.stringify({} as InProgressRecipes));
-  const { data, loading } = useFetchById();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { id: recipeId } = useParams();
-  const {
-    value: valueFavorites,
-    updateValue: updateValueFavorites,
-  } = useLocalStorage('favoriteRecipes', JSON.stringify([] as FavoriteRecipe[]));
-  const {
-    value: valueDoneRecipes,
-    updateValue: updateValueDoneRecipes,
-  } = useLocalStorage('doneRecipes', JSON.stringify([] as DoneRecipe[]));
+type RecipeCardProps = {
+  recipe: any,
+  handleFavorite: () => void,
+  favorite: boolean,
+  handleShareLink: () => void,
+  shareLink: boolean,
+  handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
+  ingredients: string[],
+  handleClick: () => void,
+  isRecipeDone: () => boolean,
+};
 
-  const recipe: any = location.pathname.includes('meals')
-    ? data as Meal[] : data as Drink[];
-
-  const isMeals = location.pathname.includes('meals');
-  useEffect(() => {
-    setFavorite(JSON.parse(valueFavorites)
-      .find((element: FavoriteRecipe) => element.id === recipeId));
-  }, [valueFavorites, recipeId]);
-
-  const handleShareLink = async () => {
-    try {
-      const path = location.pathname.split('/')[1];
-      await navigator.clipboard
-        .writeText(`${window.location.origin}/${path}/${recipeId}`);
-      setShareLink(true);
-    } catch (error) {
-      console.error('Erro ao copiar o link');
-    }
-  };
-
-  const handleFavorite = () => {
-    const favoriteRecipe = {
-      id: recipe[0].idMeal || recipe[0].idDrink,
-      type: recipe[0].idMeal ? 'meal' : 'drink',
-      nationality: recipe[0].strArea || '',
-      category: recipe[0].strCategory || '',
-      alcoholicOrNot: recipe[0].strAlcoholic || '',
-      name: recipe[0].strMeal || recipe[0].strDrink,
-      image: recipe[0].strMealThumb || recipe[0].strDrinkThumb,
-    };
-
-    const favoritesRecipes = JSON.parse(valueFavorites) as FavoriteRecipe[];
-
-    if (!favoritesRecipes.find((element) => element.id === recipeId)) {
-      updateValueFavorites(JSON.stringify([...favoritesRecipes, favoriteRecipe]));
-    } else {
-      updateValueFavorites(JSON.stringify(favoritesRecipes
-        .filter((element) => element.id !== recipeId)));
-    }
-  };
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name } = event.target;
-
-    if (ingredients.includes(name)) {
-      setIngredients(ingredients.filter((element) => element !== name));
-    } else {
-      setIngredients([...ingredients, name]);
-    }
-  };
-
-  useEffect(() => {
-    const inProgressRecipes = JSON.parse(ingredientsValue) as InProgressRecipes;
-
-    if (location.pathname.includes('meals') && recipeId && ingredients.length > 0) {
-      updateIngredientsValue(JSON.stringify({
-        ...inProgressRecipes,
-        meals: {
-          ...inProgressRecipes.meals,
-          [recipeId]: [...ingredients],
-        },
-      }));
-    }
-
-    if (location.pathname.includes('drinks') && recipeId && ingredients.length > 0) {
-      updateIngredientsValue(JSON.stringify({
-        ...inProgressRecipes,
-        drinks: {
-          ...inProgressRecipes.drinks,
-          [recipeId]: [...ingredients],
-        },
-      }));
-    }
-
-    if (location.pathname.includes('meals') && recipeId && ingredients.length === 0) {
-      updateIngredientsValue(JSON.stringify({
-        ...inProgressRecipes,
-        meals: {
-          ...inProgressRecipes.meals,
-          [recipeId]: [],
-        },
-      }));
-    }
-
-    if (location.pathname.includes('drinks') && recipeId && ingredients.length === 0) {
-      updateIngredientsValue(JSON.stringify({
-        ...inProgressRecipes,
-        drinks: {
-          ...inProgressRecipes.drinks,
-          [recipeId]: [],
-        },
-      }));
-    }
-  }, [ingredients]);
-
-  useEffect(() => {
-    const ingredientsStorage = JSON.parse(ingredientsValue);
-    const isMeal = location.pathname.includes('meals');
-
-    if (recipeId && ingredientsStorage) {
-      if (isMeal && ingredientsStorage.meals && ingredientsStorage.meals[recipeId]) {
-        setIngredients(ingredientsStorage.meals[recipeId]);
-      }
-      if (!isMeal && ingredientsStorage.drinks && ingredientsStorage.drinks[recipeId]) {
-        setIngredients(ingredientsStorage.drinks[recipeId]);
-      }
-    }
-  }, []);
-
-  const isRecipeDone = () => {
-    if (recipe[0]) {
-      const recipeIngredients = Object.entries(recipe[0])
-        .filter((element) => element[0].includes('strIngredient'))
-        .reduce((acc: any, curr: any) => {
-          if (curr[1] !== '' && curr[1] !== null) {
-            return [...acc, curr[1]];
-          }
-          return acc;
-        }, []);
-
-      return recipe[0] && ingredients.length === recipeIngredients.length;
-    }
-  };
-
-  const handleClick = () => {
-    navigate('/done-recipes');
-
-    const doneRecipe = {
-      id: recipe[0].idMeal || recipe[0].idDrink,
-      type: recipe[0].idMeal ? 'meal' : 'drink',
-      nationality: recipe[0].strArea || '',
-      name: recipe[0].strMeal || recipe[0].strDrink,
-      category: recipe[0].strCategory || '',
-      image: recipe[0].strMealThumb || recipe[0].strDrinkThumb,
-      alcoholicOrNot: recipe[0].strAlcoholic || '',
-      doneDate: new Date().toISOString(),
-      tags: recipe[0].strTags ? recipe[0].strTags.split(',') : [],
-    };
-
-    const doneRecipes = JSON.parse(valueDoneRecipes) as DoneRecipe[];
-
-    if (!doneRecipes.find((element) => element.id === recipeId) && recipeId) {
-      updateValueDoneRecipes(JSON.stringify([...doneRecipes, doneRecipe]));
-      const newInProgressRecipes = JSON.parse(ingredientsValue);
-      delete newInProgressRecipes[isMeals ? 'meals' : 'drinks'][recipeId];
-      updateIngredientsValue(JSON.stringify(newInProgressRecipes));
-    }
-  };
-
-  if (loading) return (<div>Loading...</div>);
-
+function RecipeCard({
+  favorite,
+  handleFavorite,
+  handleShareLink,
+  recipe,
+  shareLink,
+  handleChange,
+  ingredients,
+  handleClick,
+  isRecipeDone,
+}: RecipeCardProps) {
   return (
-    <div>
-      <div>
-        <IconButton onClick={ handleShareLink } data-testid="share-btn">
+    <Box>
+      <Box
+        sx={ {
+          position: 'absolute',
+          right: 0,
+        } }
+      >
+        <IconButton color="primary" onClick={ handleFavorite }>
+          { favorite ? <FavoriteIcon
+            data-testid="favorite-btn"
+          /> : <FavoriteBorderIcon
+            data-testid="favorite-btn"
+          /> }
+        </IconButton>
+        <IconButton color="primary" onClick={ handleShareLink } data-testid="share-btn">
           <ShareIcon />
         </IconButton>
-        <button onClick={ handleFavorite }>
-          <img
-            src={ favorite ? isFavoriteIcon : favoriteIcon }
-            alt="Favorite Icon"
-            data-testid="favorite-btn"
-          />
-        </button>
-        {shareLink && <span>Link copied!</span>}
-      </div>
-      <img
-        src={ recipe[0]?.strMealThumb || recipe[0]?.strDrinkThumb }
-        alt={ recipe[0]?.strMeal || recipe[0]?.strDrink }
+        {shareLink && (
+          <Typography
+            component="span"
+            variant="subtitle2"
+            color="black"
+            fontWeight={ 700 }
+          >
+            Link copied!
+          </Typography>)}
+      </Box>
+      <Paper
+        component="article"
+        elevation={ 5 }
         data-testid="recipe-photo"
-      />
-      <h1 data-testid="recipe-title">{recipe[0]?.strMeal || recipe[0]?.strDrink}</h1>
-      <p data-testid="recipe-category">{recipe[0]?.strCategory}</p>
-      {recipe[0] && (
-        <div>
-          {Array.from({ length: 15 }, (value, index) => index + 1).map((i) => {
-            const recipeIngredients = recipe[0][`strIngredient${i}`];
-            return recipeIngredients;
-          }).filter((ingredient) => ingredient !== '' && ingredient !== null)
-            .map((element, index) => (
-              <label
-                data-testid={ `${index}-ingredient-step` }
-                htmlFor={ `${index}-ingredient-step` }
-                key={ element }
-                style={ { textDecoration: ingredients.includes(element)
-                  ? 'line-through solid rgb(0, 0, 0)' : 'none',
-                display: 'block',
-                } }
-              >
-                <input
-                  type="checkbox"
-                  name={ element }
-                  id={ `${index}-ingredient-step` }
-                  onChange={ handleChange }
-                  checked={ ingredients.includes(element) }
-                />
-                {element}
-              </label>
-            ))}
-        </div>)}
-      <p data-testid="instructions">{recipe[0]?.strInstructions}</p>
+        sx={ {
+          height: '360px',
+          backgroundImage: `url(${recipe[0]?.strMealThumb || recipe[0]?.strDrinkThumb})`,
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center center',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginBottom: '30px',
+          textAlign: 'center',
+        } }
+      >
+        <Box
+          sx={ {
+            padding: '0 20px',
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          } }
+        >
+          <Typography
+            color="primary"
+            variant="h6"
+            data-testid="recipe-category"
+            fontWeight={ 700 }
+            sx={ {
+              position: 'absolute',
+              left: '10px',
+              top: 0,
+              textShadow: '2px 2px 2px rgba(0, 0, 0, 0.5)',
+            } }
+          >
+            { recipe[0]?.strCategory }
+          </Typography>
+          <Typography
+            variant="h4"
+            color="white"
+            data-testid="recipe-title"
+            fontWeight={ 700 }
+            sx={ {
+              textShadow: '2px 2px 2px rgba(0, 0, 0, 0.5)',
+              alignSelf: 'center',
+            } }
+          >
+            { recipe[0]?.strMeal || recipe[0]?.strDrink }
+          </Typography>
+        </Box>
+      </Paper>
+      <Box p={ 2 }>
+        <Typography
+          variant="h5"
+          p="10px 20px"
+          fontWeight={ 700 }
+        >
+          Ingredients
+        </Typography>
+        {recipe[0] && (
+          <List sx={ { border: '1px solid black', borderRadius: '10px' } }>
+            {Array.from({ length: 15 }, (value, index) => index + 1).map((i) => {
+              const recipeIngredients = recipe[0][`strIngredient${i}`];
+              return recipeIngredients;
+            }).filter((ingredient) => ingredient !== '' && ingredient !== null)
+              .map((element, index) => (
+                <ListItem
+                  key={ element }
+                >
+                  <FormControlLabel
+                    data-testid={ `${index}-ingredient-step` }
+                    control={ <Checkbox
+                      name={ element }
+                      id={ `${index}-ingredient-step` }
+                      onChange={ handleChange }
+                      size="small"
+                      checked={ ingredients.includes(element) }
+                    /> }
+                    label={ element }
+                    sx={ { textDecoration: ingredients.includes(element)
+                      ? 'line-through solid rgb(0, 0, 0)' : 'none',
+                    display: 'block',
+                    } }
+                  />
+                </ListItem>
+              ))}
+          </List>)}
+      </Box>
+      <Box p={ 2 }>
+        <Typography
+          variant="h5"
+          p="10px 20px"
+          fontWeight={ 700 }
+        >
+          Instructions
+        </Typography>
+        <Box
+          sx={ {
+            border: '1px solid black',
+            borderRadius: '10px',
+          } }
+        >
+          <Typography
+            variant="subtitle1"
+            textAlign="justify"
+            margin="10px"
+            display="block"
+            data-testid="instructions"
+          >
+            {recipe[0]?.strInstructions}
+          </Typography>
+        </Box>
+      </Box>
       <Button
         variant="contained"
         data-testid="finish-recipe-btn"
         sx={ {
           position: 'fixed',
-          bottom: 0,
+          bottom: '0',
+          marginTop: '20%',
+          marginLeft: '20%',
+          width: '60%',
         } }
         onClick={ handleClick }
         disabled={ !isRecipeDone() }
       >
         Finish Recipe
-
       </Button>
-    </div>
+    </Box>
   );
 }
 

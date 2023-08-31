@@ -25,7 +25,6 @@ function Recipe() {
   } = useLocalStorage('doneRecipes', JSON.stringify([] as DoneRecipe[]));
   const {
     value: valueInProgress,
-    updateValue: updateValueInProgress,
   } = useLocalStorage('inProgressRecipes', JSON.stringify({} as InProgressRecipes));
   const {
     value: valueFavorites,
@@ -102,7 +101,12 @@ function Recipe() {
 
   return (
     <Box>
-      <Box>
+      <Box
+        sx={ {
+          position: 'absolute',
+          right: 0,
+        } }
+      >
         <IconButton color="primary" onClick={ handleFavorite }>
           { favorite ? <FavoriteIcon
             data-testid="favorite-btn"
@@ -116,7 +120,7 @@ function Recipe() {
         {shareLink && <span>Link copied!</span>}
       </Box>
       <RecipeInfos location={ location } data={ data } entriesRecipe={ entriesRecipe } />
-      {drinksRecipes.length > 1 ? (
+      {drinksRecipes.length ? (
         <Carousel drinks={ drinksRecipes.slice(0, 6) } />
       ) : (
         <Carousel meals={ mealsRecipes.slice(0, 6) } />
@@ -128,7 +132,10 @@ function Recipe() {
           onClick={ handleClick }
           sx={ {
             position: 'fixed',
-            bottom: 0,
+            bottom: '0',
+            marginTop: '20%',
+            marginLeft: '20%',
+            width: '60%',
           } }
         >
           {isInProgress ? 'Continue Recipe' : 'Start Recipe'}
