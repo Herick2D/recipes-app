@@ -71,7 +71,7 @@ function FavoriteRecipes() {
         </button>
       </div>
       <div>
-        {filteredFavRecipes.map((recipe, index) => (
+        {filteredFavRecipes.length > 0 && filteredFavRecipes.map((recipe, index) => (
           <div key={ recipe.id }>
             <Link
               to={ `/${recipe.type}s/${recipe.id}` }
