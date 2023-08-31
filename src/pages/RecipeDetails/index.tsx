@@ -1,15 +1,16 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Button, IconButton } from '@mui/material';
+import { Box, Button, IconButton } from '@mui/material';
 import ShareIcon from '@mui/icons-material/Share';
-import isFavoriteIcon from '../../images/blackHeartIcon.svg';
-import favoriteIcon from '../../images/whiteHeartIcon.svg';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import useFetchById from '../../hooks/useFetchById';
 import RecipeInfos from './components/RecipeInfos';
 import useFetchGeneric from '../../hooks/useFetchGeneric';
 import Carousel from './components/Carousel';
 import { DoneRecipe, FavoriteRecipe, InProgressRecipes } from '../../types';
 import useLocalStorage from '../../hooks/useLocalStorage';
+import Loading from '../../components/Loading';
 
 function Recipe() {
   const [entriesRecipe, setEntriesRecipe] = useState<[string, string][]>([]);
@@ -64,6 +65,9 @@ function Recipe() {
     try {
       await navigator.clipboard.writeText(`${window.location.origin}${pathname}`);
       setShareLink(true);
+      setInterval(() => {
+        setShareLink(false);
+      }, 3000);
     } catch (error) {
       console.error('Erro ao copiar o link');
     }
@@ -93,22 +97,24 @@ function Recipe() {
   };
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <Loading />;
   }
 
   return (
-    <main>
-      <IconButton onClick={ handleShareLink } data-testid="share-btn">
-        <ShareIcon />
-      </IconButton>
-      <button onClick={ handleFavorite }>
-        <img
-          src={ favorite ? isFavoriteIcon : favoriteIcon }
-          alt="Favorite Icon"
-          data-testid="favorite-btn"
-        />
-      </button>
-      {shareLink && <span>Link copied!</span>}
+    <Box>
+      <Box>
+        <IconButton color="primary" onClick={ handleFavorite }>
+          { favorite ? <FavoriteIcon
+            data-testid="favorite-btn"
+          /> : <FavoriteBorderIcon
+            data-testid="favorite-btn"
+          /> }
+        </IconButton>
+        <IconButton color="primary" onClick={ handleShareLink } data-testid="share-btn">
+          <ShareIcon />
+        </IconButton>
+        {shareLink && <span>Link copied!</span>}
+      </Box>
       <RecipeInfos location={ location } data={ data } entriesRecipe={ entriesRecipe } />
       {drinksRecipes.length > 1 ? (
         <Carousel drinks={ drinksRecipes.slice(0, 6) } />
@@ -127,7 +133,7 @@ function Recipe() {
         >
           {isInProgress ? 'Continue Recipe' : 'Start Recipe'}
         </Button>)}
-    </main>
+    </Box>
   );
 }
 

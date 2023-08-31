@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Stack, TextField } from '@mui/material';
+import { Button, Stack, TextField, Typography } from '@mui/material';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import { LoginFormType } from '../../../types';
 
@@ -41,6 +41,15 @@ function Form() {
 
   return (
     <Stack component="form" spacing={ 2 } onSubmit={ handleSubmit }>
+      <Typography
+        variant="h5"
+        fontWeight={ 500 }
+        fontStyle="italic"
+        color="secondary"
+        alignSelf="center"
+      >
+        LOGIN
+      </Typography>
       <TextField
         name="email"
         variant="outlined"

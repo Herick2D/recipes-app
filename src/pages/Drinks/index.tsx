@@ -1,8 +1,10 @@
 import { useContext, useEffect, useState } from 'react';
+import { Box } from '@mui/material';
 import { RecipesContexts } from '../../contexts/recipesContexts';
 import { Drink } from '../../types';
 import Recipes from '../../components/Recipes';
 import { fetchGeneric } from '../../services/fetchGeneric';
+import Loading from '../../components/Loading';
 
 function Drinks() {
   const {
@@ -33,13 +35,13 @@ function Drinks() {
   }, [recipes]);
 
   if (isLoading) {
-    return <h1>Carregando...</h1>;
+    return <Loading />;
   }
 
   return (
-    <main>
+    <Box component="main" display="flex" alignItems="center" justifyContent="center">
       <Recipes recipes={ drinksArray } pathname="/drinks" />
-    </main>
+    </Box>
   );
 }
 

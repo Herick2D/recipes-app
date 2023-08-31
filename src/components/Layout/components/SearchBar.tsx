@@ -1,5 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Button, FormControlLabel, Radio,
+  RadioGroup, Stack, TextField } from '@mui/material';
 import { RecipesContexts } from '../../../contexts/recipesContexts';
 import helperEndpoint from '../../../services/helperEndpoint';
 import { RadioType } from '../../../types';
@@ -58,57 +60,72 @@ function SearchBar({ pathname }: SearchBarProps) {
   };
 
   return (
-    <form onSubmit={ handleSearchSubmit }>
-      <div>
-        <label>
-          <input
-            type="radio"
-            name="search-type"
-            value="ingredient"
-            checked={ searchType === 'ingredient' }
-            onChange={ handleSearchTypeChange }
-            data-testid="ingredient-search-radio"
-          />
-          Ingredient
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="search-type"
-            value="name"
-            checked={ searchType === 'name' }
-            onChange={ handleSearchTypeChange }
-            data-testid="name-search-radio"
-          />
-          Name
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="search-type"
-            value="firstLetter"
-            checked={ searchType === 'firstLetter' }
-            onChange={ handleSearchTypeChange }
-            data-testid="first-letter-search-radio"
-          />
-          First Letter
-        </label>
-      </div>
-      <input
+    <Stack
+      component="form"
+      onSubmit={ handleSearchSubmit }
+      alignSelf="center"
+      alignItems="center"
+      p="0 0 10px 0"
+      borderRadius={ 2 }
+      sx={ {
+        width: { xs: '95%', md: '50%' },
+        backgroundColor: '#41197F',
+        color: 'white',
+        mb: 1,
+      } }
+    >
+      <TextField
         type="text"
         value={ searchQuery }
         onChange={ (handleSearchQueryChange) }
-        placeholder="Enter search query"
-        data-testid="search-input"
+        label="Search"
+        variant="outlined"
+        fullWidth
+        inputProps={ { 'data-testid': 'search-input' } }
+        sx={ {
+          backgroundColor: 'white',
+        } }
       />
-      <button
+      <RadioGroup
+        onChange={ handleSearchTypeChange }
+        row
+      >
+        <FormControlLabel
+          name="search-type"
+          value="ingredient"
+          label="Ingredient"
+          control={ <Radio size="small" /> }
+          checked={ searchType === 'ingredient' }
+          data-testid="ingredient-search-radio"
+        />
+        <FormControlLabel
+          name="search-type"
+          value="name"
+          label="Name"
+          control={ <Radio size="small" /> }
+          checked={ searchType === 'name' }
+          data-testid="name-search-radio"
+        />
+        <FormControlLabel
+          name="search-type"
+          value="firstLetter"
+          control={ <Radio size="small" /> }
+          checked={ searchType === 'firstLetter' }
+          data-testid="first-letter-search-radio"
+          label="First Letter"
+        />
+      </RadioGroup>
+      <Button
         type="submit"
         data-testid="exec-search-btn"
+        variant="contained"
+        sx={ {
+          width: { xs: '50%', md: '25%' },
+        } }
       >
         Search
-
-      </button>
-    </form>
+      </Button>
+    </Stack>
   );
 }
 

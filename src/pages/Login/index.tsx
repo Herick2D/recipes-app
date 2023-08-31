@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import Form from './components/Form';
 import logo from '../../images/logo.svg';
 import loginImg from '../../images/loginImage.svg';
@@ -13,27 +13,27 @@ function Login() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'space-around',
       } }
     >
       <Box
         component="img"
         src={ logo }
         width={ 198 }
+        alt="login-logo"
       />
       <Box
         component="img"
         src={ loginImg }
-        height={ { xs: 279, md: 0 } }
+        alt="login-logo"
+        sx={ {
+          display: { xs: 'flex', md: 'none' },
+          position: 'absolute',
+          left: 0,
+          bottom: '35%',
+          height: '250px',
+        } }
       />
-      <Typography
-        variant="h5"
-        fontWeight={ 500 }
-        fontStyle="italic"
-        color="secondary"
-      >
-        LOGIN
-      </Typography>
       <Form />
     </Box>
   );

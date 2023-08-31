@@ -1,28 +1,58 @@
-import { useNavigate } from 'react-router-dom';
-import { ButtonStyled, FooterStyled } from './styles/FooterStyles';
+import { Box, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 function Footer() {
-  const navigate = useNavigate();
-
   return (
-    <FooterStyled data-testid="footer" id="footer">
-      <ButtonStyled onClick={ () => navigate('/drinks') }>
+    <Box
+      component="footer"
+      data-testid="footer"
+      sx={ {
+        backgroundColor: '#41197F',
+        padding: '10px 20px',
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'space-between',
+        bottom: 0,
+        position: 'fixed',
+      } }
+    >
+      <Box
+        component={ Link }
+        to="/drinks"
+        sx={ {
+          textDecoration: 'none',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        } }
+      >
         <img
           className="footer-img"
           src="src/images/drinkIcon.svg"
           alt="drink-button"
           data-testid="drinks-bottom-btn"
         />
-      </ButtonStyled>
-      <ButtonStyled onClick={ () => navigate('/meals') }>
+        <Typography variant="caption" color="primary">Drinks</Typography>
+      </Box>
+      <Box
+        component={ Link }
+        to="/meals"
+        sx={ {
+          textDecoration: 'none',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        } }
+      >
         <img
           className="footer-img"
           src="src/images/mealIcon.svg"
           alt="food-button"
           data-testid="meals-bottom-btn"
         />
-      </ButtonStyled>
-    </FooterStyled>
+        <Typography variant="caption" color="primary">Meals</Typography>
+      </Box>
+    </Box>
   );
 }
 
