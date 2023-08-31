@@ -47,7 +47,7 @@ describe('Testa componente Recipes em Meals', () => {
 
     const beefBtn = await screen.findByTestId('Beef-category-filter');
 
-    userEvent.click(beefBtn);
+    await userEvent.click(beefBtn);
 
     const beefRecipe = await screen.findByText(/beef and mustard pie/i);
 
@@ -98,7 +98,6 @@ describe('Testa componente Recipes em Drinks', () => {
 
     const cocktailRecipe = await screen.findByText(/155 Belmont/i);
 
-    screen.debug();
     expect(cocktailRecipe).toBeInTheDocument();
   });
 

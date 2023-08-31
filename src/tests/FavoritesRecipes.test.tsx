@@ -1,30 +1,33 @@
 import { screen } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
+import { act } from '@testing-library/react';
 import { renderWithRouter } from './helpers/renderWithRouter';
 import FavoriteRecipes from '../pages/FavoriteRecipes';
 
 describe('', () => {
-  localStorage.setItem('favoriteRecipes', JSON.stringify([
-    {
-      id: '52977',
-      type: 'meal',
-      nationality: 'Italian',
-      category: 'Vegetarian',
-      alcoholicOrNot: '',
-      name: 'Spicy Arrabiata Penne',
-      image: 'https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg',
-    },
-    {
-      id: '178319',
-      type: 'drink',
-      nationality: 'Brazil',
-      category: 'Cocktail',
-      alcoholicOrNot: 'Alcoholic',
-      name: 'Caipirinha',
-      image: 'https://www.thecocktaildb.com/images/media/drink/vwxrsw1478251483.jpg',
-    },
-  ]));
+  beforeEach(() => {
+    global.Storage.prototype.getItem = vi.fn(() => (JSON.stringify([
+      {
+        id: '52977',
+        type: 'meal',
+        nationality: 'Italian',
+        category: 'Vegetarian',
+        alcoholicOrNot: '',
+        name: 'Spicy Arrabiata Penne',
+        image: 'https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg',
+      },
+      {
+        id: '178319',
+        type: 'drink',
+        nationality: 'Brazil',
+        category: 'Cocktail',
+        alcoholicOrNot: 'Alcoholic',
+        name: 'Caipirinha',
+        image: 'https://www.thecocktaildb.com/images/media/drink/vwxrsw1478251483.jpg',
+      },
+    ])));
+  });
 
   test('Verificando se os elementos estão sendo renderizandos em tela', () => {
     renderWithRouter(<FavoriteRecipes />);
@@ -75,26 +78,28 @@ describe('', () => {
   });
 
   test('Verificando se o botão de compartilhar funciona', async () => {
-    localStorage.setItem('favoriteRecipes', JSON.stringify([
-      {
-        id: '52977',
-        type: 'meal',
-        nationality: 'Italian',
-        category: 'Vegetarian',
-        alcoholicOrNot: '',
-        name: 'Spicy Arrabiata Penne',
-        image: 'https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg',
-      },
-      {
-        id: '178319',
-        type: 'drink',
-        nationality: 'Brazil',
-        category: 'Cocktail',
-        alcoholicOrNot: 'Alcoholic',
-        name: 'Caipirinha',
-        image: 'https://www.thecocktaildb.com/images/media/drink/vwxrsw1478251483.jpg',
-      },
-    ]));
+    act(() => {
+      localStorage.setItem('favoriteRecipes', JSON.stringify([
+        {
+          id: '52977',
+          type: 'meal',
+          nationality: 'Italian',
+          category: 'Vegetarian',
+          alcoholicOrNot: '',
+          name: 'Spicy Arrabiata Penne',
+          image: 'https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg',
+        },
+        {
+          id: '178319',
+          type: 'drink',
+          nationality: 'Brazil',
+          category: 'Cocktail',
+          alcoholicOrNot: 'Alcoholic',
+          name: 'Caipirinha',
+          image: 'https://www.thecocktaildb.com/images/media/drink/vwxrsw1478251483.jpg',
+        },
+      ]));
+    });
     // @ts-expect-error Property 'clipboard' does not exist on type 'Navigator'.
     global.navigator.clipboard = {
       writeText: vi.fn(),
