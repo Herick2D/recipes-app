@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import { DoneRecipe } from '../../types';
-import shareIcon from '../../images/shareIcon.svg';
+import allIcon from '../../images/allLogo.svg';
+import allMealsIcon from '../../images/AllMeals.svg';
+import allDrinksIcon from '../../images/AllDrinks.svg';
+import ShareButton from './components/ShareButton';
 
 function DoneRecipes() {
   const { value } = useLocalStorage('doneRecipes', JSON.stringify([] as DoneRecipe[]));
@@ -27,76 +31,170 @@ function DoneRecipes() {
     }
   };
 
-  const handleClipBoard = async (type: string, id:string) => {
-    try {
-      await navigator.clipboard.writeText(`${window.location.origin}/${type}s/${id}`);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 3000);
-    } catch (error) {
-      console.error('Erro ao copiar o link');
-    }
-  };
-
   return (
-    <div>
-      <div>
-        <button
+    <Box
+      display="flex"
+      flexDirection="column"
+      justifyContent="center"
+      component="main"
+    >
+      <Stack
+        component="section"
+        direction="row"
+        spacing={ 2 }
+        alignSelf="center"
+      >
+        <Button
           data-testid="filter-by-all-btn"
           onClick={ () => handleFilter('all') }
         >
-          All
-        </button>
-        <button
+          <Box component="img" height={ 66 } src={ allIcon } />
+        </Button>
+        <Button
           onClick={ () => handleFilter('meals') }
           data-testid="filter-by-meal-btn"
         >
-          Meals
-        </button>
-        <button
+          <Box component="img" height={ 66 } src={ allMealsIcon } />
+        </Button>
+        <Button
           onClick={ () => handleFilter('drinks') }
           data-testid="filter-by-drink-btn"
         >
-          Drinks
-        </button>
-      </div>
-      {recipes.length && recipes.map((recipe, index) => (
-        <div key={ recipe.id } style={ { marginBottom: '50px' } }>
-          <Link to={ `/${recipe.type}s/${recipe.id}` }>
-            <img
-              style={ { width: '300px', height: '250px' } }
-              data-testid={ `${index}-horizontal-image` }
-              src={ recipe.image }
-              alt={ recipe.name }
-            />
-            <p data-testid={ `${index}-horizontal-name` }>{recipe.name}</p>
-          </Link>
-          <p data-testid={ `${index}-horizontal-top-text` }>{recipe.category}</p>
-          <p data-testid={ `${index}-horizontal-done-date` }>{recipe.doneDate}</p>
-          {recipe.type === 'meal' ? (
-            <p
-              data-testid={ `${index}-horizontal-top-text` }
+          <Box component="img" height={ 66 } src={ allDrinksIcon } />
+        </Button>
+      </Stack>
+      <Stack
+        component="section"
+        spacing={ 4 }
+        flexWrap="wrap"
+        justifyContent="center"
+        alignItems="center"
+        p={ 2 }
+        mb={ 10 }
+      >
+        {recipes.length && recipes.map((recipe, index) => (
+          <Paper
+            elevation={ 5 }
+            component={ Stack }
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            sx={ {
+              borderRadius: '10px',
+              width: { xs: '90vw', sm: '400px' },
+            } }
+            key={ recipe.id }
+          >
+            <Link to={ `/${recipe.type}s/${recipe.id}` }>
+              <Box
+                component="img"
+                src={ recipe.image }
+                alt={ recipe.name }
+                data-testid={ `${index}-horizontal-image` }
+                width={ 163 }
+                minHeight={ 200 }
+              />
+            </Link>
+            <Stack
+              spacing={ 1 }
+              width="100%"
+              ml={ { xs: 4, sm: 10 } }
             >
-              {`${recipe.nationality} - ${recipe.category}`}
-            </p>
-          ) : (
-            <p data-testid={ `${index}-horizontal-top-text` }>
-              {recipe.alcoholicOrNot}
-            </p>
-          )}
-          {recipe.tags.map((tag, i) => (
-            <p key={ i } data-testid={ `${index}-${tag}-horizontal-tag` }>{tag}</p>
-          ))}
-          <button onClick={ () => handleClipBoard(recipe.type, recipe.id) }>
-            <img
-              src={ shareIcon }
-              data-testid={ `${index}-horizontal-share-btn` }
-              alt="Share icon"
-            />
-          </button>
-          {copied && <span>Link copied!</span>}
-        </div>
-      ))}
-    </div>
+              <Box
+                display="flex"
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="space-between"
+              >
+                <Typography
+                  fontWeight={ 700 }
+                  variant="h6"
+                  fontSize={ 15 }
+                  data-testid={ `${index}-horizontal-name` }
+                  color="black"
+                  sx={ {
+                    textDecoration: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                  } }
+
+                >
+                  {recipe.name}
+                  <ShareButton
+                    recipeType={ recipe.type }
+                    recipeId={ recipe.id }
+                    setCopied={ setCopied }
+                    index={ index }
+                  />
+                </Typography>
+                {recipe.type === 'meal' ? (
+                  <Typography
+                    fontWeight={ 300 }
+                    color="#797D86"
+                    variant="caption"
+                    data-testid={ `${index}-horizontal-top-text` }
+                  >
+                    {`${recipe.nationality} - ${recipe.category}`}
+                  </Typography>
+                ) : (
+                  <Typography
+                    fontWeight={ 300 }
+                    color="#797D86"
+                    variant="caption"
+                    data-testid={ `${index}-horizontal-top-text` }
+                  >
+                    {recipe.alcoholicOrNot}
+                  </Typography>
+                )}
+                <Typography
+                  fontWeight={ 300 }
+                  color="#797D86"
+                  variant="caption"
+                  data-testid={ `${index}-horizontal-top-text` }
+                >
+                  {recipe.category}
+                </Typography>
+              </Box>
+              <Typography
+                variant="caption"
+                fontWeight={ 400 }
+                data-testid={ `${index}-horizontal-done-date` }
+              >
+                {recipe.doneDate}
+              </Typography>
+
+              <Box display="flex" alignItems="center" gap={ 1 }>
+                {recipe.tags.map((tag, i) => (
+                  <Typography
+                    key={ i }
+                    data-testid={ `${index}-${tag}-horizontal-tag` }
+                    variant="caption"
+                    color="#797D86"
+                    fontSize={ 11 }
+                    fontWeight={ 400 }
+                    sx={ {
+                      backgroundColor: '#D9D9D9',
+                      borderRadius: '20px',
+                      p: 1,
+                    } }
+                  >
+                    {tag}
+                  </Typography>
+                ))}
+                {copied && (
+                  <Typography
+                    variant="caption"
+                    fontSize={ 10 }
+                  >
+                    Link copied!
+
+                  </Typography>)}
+              </Box>
+            </Stack>
+          </Paper>
+        ))}
+      </Stack>
+    </Box>
   );
 }
 
