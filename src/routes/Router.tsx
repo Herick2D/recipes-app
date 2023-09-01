@@ -7,6 +7,7 @@ import Profile from '../pages/Profile';
 import RecipeInProgress from '../pages/RecipeInProgress';
 import Recipe from '../pages/RecipeDetails';
 import FavoriteRecipes from '../pages/FavoriteRecipes';
+import DoneRecipes from '../pages/DoneRecipes';
 import NotFound from '../pages/NotFound';
 
 function Router() {
@@ -17,7 +18,7 @@ function Router() {
         <Route path="/meals" element={ <Meals /> } />
         <Route path="/drinks" element={ <Drinks /> } />
         <Route path="/profile" element={ <Profile /> } />
-        <Route path="/done-recipes" element={ <h1>Not Found</h1> } />
+        <Route path="/done-recipes" element={ <DoneRecipes /> } />
         <Route path="/favorite-recipes" element={ <FavoriteRecipes /> } />
       </Route>
       <Route path="/meals/:id" element={ <Recipe /> } />
