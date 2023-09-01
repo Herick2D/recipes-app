@@ -126,7 +126,7 @@ function RecipeCard({
             }).filter((ingredient) => ingredient !== '' && ingredient !== null)
               .map((element, index) => (
                 <ListItem
-                  key={ element }
+                  key={ element + index }
                 >
                   <FormControlLabel
                     data-testid={ `${index}-ingredient-step` }

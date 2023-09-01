@@ -72,7 +72,7 @@ function DoneRecipes() {
         p={ 2 }
         mb={ 10 }
       >
-        {recipes.length && recipes.map((recipe, index) => (
+        {recipes.map((recipe, index) => (
           <Paper
             elevation={ 5 }
             component={ Stack }
@@ -162,7 +162,6 @@ function DoneRecipes() {
               >
                 {recipe.doneDate}
               </Typography>
-
               <Box display="flex" alignItems="center" gap={ 1 }>
                 {recipe.tags.map((tag, i) => (
                   <Typography
@@ -187,7 +186,6 @@ function DoneRecipes() {
                     fontSize={ 10 }
                   >
                     Link copied!
-
                   </Typography>)}
               </Box>
             </Stack>

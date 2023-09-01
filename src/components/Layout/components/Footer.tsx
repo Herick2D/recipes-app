@@ -1,6 +1,8 @@
 import { Box, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import InfoIcon from '@mui/icons-material/Info';
+import DrinkIcon from '../../../images/drinkIcon.svg';
+import MealIcon from '../../../images/mealIcon.svg';
 
 function Footer() {
   return (
@@ -29,7 +31,7 @@ function Footer() {
       >
         <img
           className="footer-img"
-          src="src/images/drinkIcon.svg"
+          src={ DrinkIcon }
           alt="drink-button"
           data-testid="drinks-bottom-btn"
         />
@@ -60,7 +62,7 @@ function Footer() {
       >
         <img
           className="footer-img"
-          src="src/images/mealIcon.svg"
+          src={ MealIcon }
           alt="food-button"
           data-testid="meals-bottom-btn"
         />
