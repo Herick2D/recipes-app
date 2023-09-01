@@ -21,7 +21,7 @@ Você pode acessar o aplicativo <a href="https://recipes-app-weld.vercel.app/" t
 
 ## Time de desenvolvimento
 
-- [Leonardo Bradão](https://github.com/leonardocbrand)
+- [Leonardo Brandão](https://github.com/leonardocbrand)
 - [Herick Moreira](https://github.com/Herick2D)
 - [Matheus Bandeira](https://github.com/mathban)
 - [Rodrigo Matos](https://github.com/VitorBarrioni)
