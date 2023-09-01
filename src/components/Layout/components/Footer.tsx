@@ -1,5 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
+import InfoIcon from '@mui/icons-material/Info';
 
 function Footer() {
   return (
@@ -33,6 +34,19 @@ function Footer() {
           data-testid="drinks-bottom-btn"
         />
         <Typography variant="caption" color="primary">Drinks</Typography>
+      </Box>
+      <Box
+        component={ Link }
+        to="/about"
+        sx={ {
+          textDecoration: 'none',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        } }
+      >
+        <InfoIcon color="primary" fontSize="medium" />
+        <Typography variant="caption" color="primary">About us</Typography>
       </Box>
       <Box
         component={ Link }

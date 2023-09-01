@@ -9,6 +9,7 @@ import Recipe from '../pages/RecipeDetails';
 import FavoriteRecipes from '../pages/FavoriteRecipes';
 import DoneRecipes from '../pages/DoneRecipes';
 import NotFound from '../pages/NotFound';
+import About from '../pages/About';
 
 function Router() {
   return (
@@ -20,6 +21,7 @@ function Router() {
         <Route path="/profile" element={ <Profile /> } />
         <Route path="/done-recipes" element={ <DoneRecipes /> } />
         <Route path="/favorite-recipes" element={ <FavoriteRecipes /> } />
+        <Route path="/about" element={ <About /> } />
       </Route>
       <Route path="/meals/:id" element={ <Recipe /> } />
       <Route path="/drinks/:id" element={ <Recipe /> } />
