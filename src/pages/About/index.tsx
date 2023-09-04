@@ -20,7 +20,7 @@ const teams = [
   },
   {
     name: 'Matheus Bandeira',
-    linkedin: 'mathban',
+    linkedin:'rodrigo-dos-reis-matos-592683175',
     github: 'mathban',
   },
   {
