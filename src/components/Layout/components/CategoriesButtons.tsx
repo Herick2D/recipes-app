@@ -6,10 +6,11 @@ import { fetchRecipesByCategory } from '../../../services/fetchCategories';
 import providerIcons from '../../../services/providerIcons';
 import allDrinks from '../../../images/AllDrinks.svg';
 import allMeals from '../../../images/AllMeals.svg';
+import Loading from '../../Loading';
 
 function CategoriesButtons({ pathname }: { pathname: string }) {
   const [buttonName, setButtonName] = useState('');
-  const { categories } = useCategories();
+  const { categories, loading } = useCategories();
   const {
     setRecipes,
     setCategoryRecipes,
@@ -34,6 +35,8 @@ function CategoriesButtons({ pathname }: { pathname: string }) {
       setIsLoading(false);
     }
   };
+
+  if (loading) return <Loading />;
 
   return (
     pathname === '/meals' || pathname === '/drinks' ? (
